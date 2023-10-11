@@ -1,8 +1,11 @@
 package com.tl.hotelproject.entity.user;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
+import com.tl.hotelproject.entity.bill.Bill;
+import com.tl.hotelproject.entity.booking.Booking;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -35,6 +39,13 @@ public class User extends CommonObjectDTO implements UserDetails {
     private String phoneNumber;
     private boolean isActive;
     private Collection<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Booking> bookingList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Bill> bills;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> roleList = new ArrayList<>();

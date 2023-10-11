@@ -1,6 +1,8 @@
 package com.tl.hotelproject.entity;
 
+import jakarta.persistence.Id;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 
