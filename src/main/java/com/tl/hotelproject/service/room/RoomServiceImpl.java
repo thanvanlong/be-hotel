@@ -1,4 +1,4 @@
-package com.tl.hotelproject.service.zoom;
+package com.tl.hotelproject.service.room;
 
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.RoomRepo;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Room findById(String id) throws Exception{
+        Optional<Room> room = roomRepo.findById(id);
+        if (room.isPresent()) {
+            return room.get();
+        } else {
+            throw new Exception("Không tìm thấy phòng với ID đã cho");
+        }
+    }
+
+    @Override
     public  Map<String, Object> pagingSort(int page, int limit) {
         Pageable pagingSort = PageRequest.of(page, limit);
         Page<Room> roomPage = roomRepo.findAll(pagingSort);
@@ -59,5 +70,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room getRoomWithFeature(String id) {
         return this.roomRepo.findRoomWithFeatureRooms(id);
+    }
+
+    @Override
+    public Room getRoomBySlugWithFeature(String slug) {
+        return this.roomRepo.findRoomWithFeatureRooms(slug);
     }
 }
