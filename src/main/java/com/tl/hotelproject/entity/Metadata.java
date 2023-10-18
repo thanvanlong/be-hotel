@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class Metadata {
     private int pageNumber;
     private int pageSize;
-    private int totalPage;
+    private int totalPages;
+    private long totalItems;
 }

@@ -1,5 +1,6 @@
 package com.tl.hotelproject.dtos.booking;
 
+import com.tl.hotelproject.entity.bill.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,6 @@ public class AddBookingDto {
 
     // Room
     private String idRoom;
+
+    private PaymentType paymentType;
 }

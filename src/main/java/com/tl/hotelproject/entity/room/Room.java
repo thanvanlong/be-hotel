@@ -1,7 +1,7 @@
 package com.tl.hotelproject.entity.room;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
-import com.tl.hotelproject.entity.booking.BookedRoom;
+import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.utils.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,8 +32,11 @@ public class Room extends CommonObjectDTO {
     @ElementCollection
     private List<String> images;
 
+//    @OneToMany(mappedBy = "room")
+//    private List<BookedRoom> bookedRooms;
+
     @OneToMany(mappedBy = "room")
-    private List<BookedRoom> bookedRooms;
+    private List<Booking> bookings;
 
     @ManyToMany
     @JoinTable(

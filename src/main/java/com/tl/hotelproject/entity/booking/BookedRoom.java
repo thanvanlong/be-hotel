@@ -29,16 +29,16 @@ public class BookedRoom extends CommonObjectDTO {
     private double selloff;
     private String note;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
+//    @ManyToOne
+//    @JoinColumn(name = "room_id")
+//    private Room room;
 
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+//    @ManyToOne
+//    @JoinColumn(name = "booking_id")
+//    private Booking booking;
 
-    @OneToMany(mappedBy = "bookedRoom")
-    private List<UsedServices> usedServices;
+//    @OneToMany(mappedBy = "bookedRoom")
+//    private List<UsedServices> usedServices;
 
 
 

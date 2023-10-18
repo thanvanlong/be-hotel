@@ -24,7 +24,12 @@ public class Bill extends CommonObjectDTO {
     private Date paymentDate;
     private double totalAmount;
     private String note;
-    private String paymentType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private PaymentType paymentType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private PaymentFor paymentFor;
 
     @ManyToOne()
     @JoinColumn(name = "booking_id")

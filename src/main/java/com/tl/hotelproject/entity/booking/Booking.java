@@ -3,6 +3,8 @@ package com.tl.hotelproject.entity.booking;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.client.Client;
+import com.tl.hotelproject.entity.room.Room;
+import com.tl.hotelproject.entity.services.UsedServices;
 import com.tl.hotelproject.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,19 +28,30 @@ public class Booking extends CommonObjectDTO {
     private Date bookingDate;
     private double selloff;
     private String note;
+    private Date checkin;
+    private Date checkout;
+    private double price;
+    private boolean isCheckedIn;
+
+//    @OneToMany(mappedBy = "booking")
+//    private List<BookedRoom> bookedRooms;
 
     @OneToMany(mappedBy = "booking")
-    private List<BookedRoom> bookedRooms;
+    private List<UsedServices> usedServices;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "booking")
-    private List<Bill> bills;
+//    @OneToMany(mappedBy = "booking")
+//    private List<Bill> bills;
 
 }

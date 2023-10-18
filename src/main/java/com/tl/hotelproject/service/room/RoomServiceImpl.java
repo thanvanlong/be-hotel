@@ -1,5 +1,6 @@
 package com.tl.hotelproject.service.room;
 
+import com.tl.hotelproject.entity.Metadata;
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.RoomRepo;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,11 @@ public class RoomServiceImpl implements RoomService {
         Pageable pagingSort = PageRequest.of(page, limit);
         Page<Room> roomPage = roomRepo.findAll(pagingSort);
 
-        Map<String, Number> metadata = new HashMap<>();
-        metadata.put("totalPages",roomPage.getTotalPages());
-        metadata.put("currentPage", roomPage.getNumber());
-        metadata.put("totalItems", roomPage.getTotalElements());
+        Metadata metadata = new Metadata();
+        metadata.setPageNumber(roomPage.getNumber());
+        metadata.setPageSize(roomPage.getSize());
+        metadata.setTotalPages(roomPage.getTotalPages());
+        metadata.setTotalItems(roomPage.getTotalElements());
 
         Map<String, Object> response = new HashMap<>();
         response.put("results", roomPage.getContent());
