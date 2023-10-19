@@ -19,4 +19,8 @@ public interface RoomService {
 
     Room getRoomWithFeature(String id);
     Room getRoomBySlugWithFeature(String slug);
+
+    Map<String, Object> pagingSortSearch(int page, int limit, String search);
+
+
 }

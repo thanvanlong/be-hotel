@@ -3,6 +3,7 @@ package com.tl.hotelproject.utils;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service()
@@ -16,5 +17,15 @@ public class StringUtils {
         String slug = withoutDiacritics.replaceAll("[-+^]*", "").replaceAll("\\s+", "-");
 
         return slug;
+    }
+
+    public static String removeAccents(String input){
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+    }
+
+    public static String uuidFileName(String input){
+        String uuid = UUID.randomUUID().toString();
+        return uuid + slugify(input) + ".jpg";
     }
 }

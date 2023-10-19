@@ -4,11 +4,21 @@ import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.RoomRepo;
 import com.tl.hotelproject.service.room.RoomService;
+import com.tl.hotelproject.utils.CloudinaryUtils;
+import com.tl.hotelproject.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,9 +35,21 @@ public class RoomController {
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listRoom(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int limit,
                                                       @RequestParam(defaultValue = "id,desc") String[] sort,
-                                                      @RequestParam(required = false) String filter) {
+                                                      @RequestParam(required = false) String search) {
 
         Map<String, Object> zoomList = roomService.pagingSort(page, limit);
+
+
+        return ResponseEntity.ok(new ResponseDTO<>(zoomList, "200", "Success", true));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> searchRoom(@RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int limit,
+                                                                     @RequestParam(defaultValue = "id,desc") String[] sort,
+                                                                     @RequestParam("search") String search) {
+
+        Map<String, Object> zoomList = roomService.pagingSortSearch(page, limit, search);
 
 
         return ResponseEntity.ok(new ResponseDTO<>(zoomList, "200", "Success", true));
@@ -39,10 +61,108 @@ public class RoomController {
         return ResponseEntity.ok(new ResponseDTO<>(room, "200", "Success", true));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<ResponseDTO<String>> saveRoom(@RequestBody Room room, @RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/save",  produces = {MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDTO<String>> saveRoom(@RequestParam("name") String name,
+                                                        @RequestParam(value = "price", required = false) double price,
+                                                        @RequestParam(value = "description", required = false) String description,
+                                                        @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
+                                                        @RequestParam("files") MultipartFile[] files) {
+
+        Room check = roomRepo.getRoomByName(name);
+        if(check != null) {
+            return ResponseEntity.ok(new ResponseDTO<String>("Ten khach san da bi trung", "500", "Failed", false));
+        }
+
+        String []typeImg = {"image/png", "image/jpeg"};
+        for (MultipartFile file : files){
+            if (!Arrays.asList(typeImg).contains(file.getContentType())) {
+                return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
+            }
+        }
+
+        Room room = new Room();
+        room.setName(name);
+        room.setPrice(price);
+        room.setFeatureRooms(featureRooms);
+        room.setDescription(description);
+
+        List<String> imgUrls = new ArrayList<>();
+
+
+        try {
+            for (MultipartFile file : files){
+                if (!Arrays.asList(typeImg).contains(file.getContentType())) {
+                    return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
+                }
+                imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(room.getName())));
+            }
+
+        } catch (IOException e) {
+            return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
+        }
+
+        room.setImages(imgUrls);
+
         roomRepo.save(room);
         return ResponseEntity.ok(new ResponseDTO<>("Save Room Done!", "200", "Success", true));
     }
+
+    @PostMapping(value = "/update", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDTO<String>> updateRoom(
+                                                            @RequestParam(value = "id") String id,
+                                                            @RequestParam(value = "name", required = false) String name,
+                                                            @RequestParam(value = "price", required = false) double price,
+                                                            @RequestParam(value = "description", required = false) String description,
+                                                            @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
+                                                            @RequestParam(value = "files", required = false) MultipartFile[] files) throws Exception{
+
+
+
+        Room room = roomService.findById(id);
+
+        if(room == null) {
+            return ResponseEntity.ok(new ResponseDTO<String>("Không tìm thấy sách để cập nhật", "404", "Failed",false));
+        }
+
+        if(name != null) room.setName(name);
+        if(description != null) room.setDescription(description);
+        if(featureRooms != null) room.setFeatureRooms(featureRooms);
+        if(!Double.isNaN(price)) room.setPrice(price);
+
+        List<String> imgUrls = new ArrayList<>();
+        if (files != null) {
+
+            if(room.getImages() != null) {
+                imgUrls.addAll(room.getImages());
+            }
+
+            String []typeImg = {"image/png", "image/jpeg"};
+            for (MultipartFile file : files){
+                if (!Arrays.asList(typeImg).contains(file.getContentType())) {
+                    return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
+                }
+            }
+
+            try {
+                for (MultipartFile file : files){
+                    if (!Arrays.asList(typeImg).contains(file.getContentType())) {
+                        return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
+                    }
+                    imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(room.getName())));
+                }
+
+            } catch (IOException e) {
+                return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
+            }
+
+            room.setImages(imgUrls);
+        }
+
+        roomRepo.save(room);
+
+        return ResponseEntity.ok(new ResponseDTO<>("Update Room Done!", "200", "Success", true));
+    }
+
+
 
 }

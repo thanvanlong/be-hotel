@@ -3,6 +3,7 @@ package com.tl.hotelproject.controller;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.bill.PaymentType;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.room.RoomService;
 import jakarta.validation.Valid;
@@ -24,7 +25,10 @@ public class BookingController {
     @PostMapping("")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
-            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body), "200","Success", true)) ;
+            if (body.getPaymentType().equals(PaymentType.Momo)){
+
+            }
+            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body), "200","Success", true));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

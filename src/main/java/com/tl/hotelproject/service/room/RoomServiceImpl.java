@@ -78,4 +78,23 @@ public class RoomServiceImpl implements RoomService {
     public Room getRoomBySlugWithFeature(String slug) {
         return this.roomRepo.findRoomWithFeatureRooms(slug);
     }
+
+    @Override
+    public Map<String, Object> pagingSortSearch(int page, int limit, String search) {
+        Pageable pagingSort = PageRequest.of(page, limit);
+        Page<Room> roomPage = roomRepo.findByNameContaining(search, pagingSort);
+
+        Metadata metadata = new Metadata();
+        metadata.setPageNumber(roomPage.getNumber());
+        metadata.setPageSize(roomPage.getSize());
+        metadata.setTotalPages(roomPage.getTotalPages());
+        metadata.setTotalItems(roomPage.getTotalElements());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", roomPage.getContent());
+        response.put("metadata", metadata);
+
+
+        return response;
+    }
 }
