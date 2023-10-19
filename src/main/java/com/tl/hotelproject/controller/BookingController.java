@@ -3,6 +3,7 @@ package com.tl.hotelproject.controller;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentType;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.room.RoomService;
@@ -22,9 +23,10 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    @PostMapping("")
+    @PostMapping("client-booking")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
+
             if (body.getPaymentType().equals(PaymentType.Momo)){
 
             }

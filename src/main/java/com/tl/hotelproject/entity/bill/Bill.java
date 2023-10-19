@@ -31,6 +31,9 @@ public class Bill extends CommonObjectDTO {
     @Enumerated(EnumType.ORDINAL)
     private PaymentFor paymentFor;
 
+    @Enumerated(EnumType.ORDINAL)
+    private PaymentState paymentState;
+
     @ManyToOne()
     @JoinColumn(name = "booking_id")
     private Booking booking;
