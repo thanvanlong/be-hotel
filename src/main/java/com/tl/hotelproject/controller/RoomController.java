@@ -65,8 +65,8 @@ public class RoomController {
 
     @PostMapping(value = "/save",  produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> saveRoom(@RequestParam("name") String name,
-                                                        @RequestParam(value = "price", required = false) double price,
-                                                        @RequestParam(value = "description", required = false) String description,
+                                                        @RequestParam(value = "price", required = false, defaultValue = "0") double price,
+                                                        @RequestParam(value = "description", required = false, defaultValue = "") String description,
                                                         @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
 
                                                         @RequestParam("files") MultipartFile[] files) {
@@ -86,7 +86,7 @@ public class RoomController {
         Room room = new Room();
         room.setName(name);
         room.setPrice(price);
-        room.setFeatureRooms(featureRooms);
+        if(featureRooms != null) room.setFeatureRooms(featureRooms);
         room.setDescription(description);
 
         List<String> imgUrls = new ArrayList<>();
