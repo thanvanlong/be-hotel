@@ -26,6 +26,6 @@ public class StringUtils {
 
     public static String uuidFileName(String input){
         String uuid = UUID.randomUUID().toString();
-        return uuid + slugify(input) + ".jpg";
+        return uuid + slugify(input);
     }
 }

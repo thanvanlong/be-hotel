@@ -97,14 +97,15 @@ public class RoomController {
                 if (!Arrays.asList(typeImg).contains(file.getContentType())) {
                     return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
                 }
-                imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(room.getName())));
+                imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(name)).toString());
             }
+
 
         } catch (IOException e) {
             return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
         }
 
-        room.setImages(imgUrls);
+
 
         roomRepo.save(room);
         return ResponseEntity.ok(new ResponseDTO<>("Save Room Done!", "200", "Success", true));
@@ -161,6 +162,8 @@ public class RoomController {
 
             room.setImages(imgUrls);
         }
+
+        System.out.println(room);
 
         roomRepo.save(room);
 

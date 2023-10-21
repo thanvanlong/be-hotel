@@ -28,7 +28,7 @@ public class Room extends CommonObjectDTO {
     private String description;
     private String slug;
 
-    @Column(columnDefinition = "text[]")
+//    @Column(columnDefinition = "text[]")
     @ElementCollection
     private List<String> images;
 
@@ -57,6 +57,7 @@ public class Room extends CommonObjectDTO {
     }
 
     public void setName(String name) {
+        this.name = name;
         this.slug = StringUtils.slugify(name);
     }
 }
