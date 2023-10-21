@@ -6,6 +6,8 @@ import com.tl.hotelproject.repo.RoomRepo;
 import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.utils.CloudinaryUtils;
 import com.tl.hotelproject.utils.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,11 +63,12 @@ public class RoomController {
         return ResponseEntity.ok(new ResponseDTO<>(room, "200", "Success", true));
     }
 
-    @PostMapping(value = "/save",  produces = {MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/save",  produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> saveRoom(@RequestParam("name") String name,
                                                         @RequestParam(value = "price", required = false) double price,
                                                         @RequestParam(value = "description", required = false) String description,
                                                         @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
+
                                                         @RequestParam("files") MultipartFile[] files) {
 
         Room check = roomRepo.getRoomByName(name);
@@ -107,16 +110,17 @@ public class RoomController {
         return ResponseEntity.ok(new ResponseDTO<>("Save Room Done!", "200", "Success", true));
     }
 
-    @PostMapping(value = "/update", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+
+    @PostMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> updateRoom(
                                                             @RequestParam(value = "id") String id,
                                                             @RequestParam(value = "name", required = false) String name,
                                                             @RequestParam(value = "price", required = false) double price,
                                                             @RequestParam(value = "description", required = false) String description,
                                                             @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
-                                                            @RequestParam(value = "files", required = false) MultipartFile[] files) throws Exception{
-
-
+                                                            @RequestParam(value = "files", required = false)
+                                                            @ApiParam(value = "Danh sách tệp ảnh", required = false, type = "string", format = "binary", allowMultiple = true)
+                                                            MultipartFile[] files) throws Exception{
 
         Room room = roomService.findById(id);
 

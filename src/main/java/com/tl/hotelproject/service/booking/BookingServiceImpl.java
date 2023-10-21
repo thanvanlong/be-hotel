@@ -33,9 +33,6 @@ public class BookingServiceImpl implements BookingService{
     private RoomService roomService;
 
     @Autowired
-    private BookedRoomService bookedRoomService;
-
-    @Autowired
     private ClientRepo clientRepo;
 
     @Autowired
@@ -77,28 +74,26 @@ public class BookingServiceImpl implements BookingService{
             return "Book room is success!";
     }
 
-//    @Override
-//    public String updateUsedService(UpdateUsedServicesDto body) throws Exception {
-//        Booking booking = this.getBookingWithRelationship(body.getId());
-//        BookedRoom bookedRoom = this.bookedRoomService.getBookedRoomWithRelationship();
-//        Services services = this.servicesService.findById(body.getId());
-//
-//        // tao usedService
-//        UsedServices usedServices = new UsedServices();
-//        usedServices.setServices(services.getId());
-//        usedServices.setQuantity(body.getQuantity());
-//        usedServices.setPrice(services.getPrice());
-//
-//        usedServices = this.usedServicesService.save(usedServices);
-//
-//        List<UsedServices> listUsed = bookedRoom.getUsedServices();
-//        listUsed.add(usedServices);
-//
-//        bookedRoom.setUsedServices(listUsed);
-//        this.bookedRoomService.update(bookedRoom);
-//
-//        return "Da cap nhat thanh cong";
-//    }
+    @Override
+    public String updateUsedService(UpdateUsedServicesDto body) throws Exception {
+        Booking booking = this.getBookingWithRelationship(body.getId());
+        Services services = this.servicesService.findById(body.getId());
+
+        // tao usedService
+        UsedServices usedServices = new UsedServices();
+        usedServices.setServices(services.getId());
+        usedServices.setQuantity(body.getQuantity());
+        usedServices.setPrice(services.getPrice());
+
+        usedServices = this.usedServicesService.save(usedServices);
+
+        List<UsedServices> listUsed = booking.getUsedServices();
+        listUsed.add(usedServices);
+
+        bookingRepo.save(booking);
+
+        return "Da cap nhat thanh cong";
+    }
 
     @Override
     public Booking findById(String id) throws Exception {

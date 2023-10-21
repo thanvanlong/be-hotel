@@ -27,7 +27,7 @@ public class BookingController {
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
 
-            if (body.getPaymentType().equals(PaymentType.Momo)){
+            if (body.getPaymentType() == PaymentType.Momo){
 
             }
             return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body), "200","Success", true));
@@ -36,10 +36,10 @@ public class BookingController {
         }
     }
 
-//    @PutMapping("update-service")
-//    public ResponseEntity<ResponseDTO<String>> updateService(@Valid @RequestBody UpdateUsedServicesDto body) throws Exception{
-//        return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.updateUsedService(body), "200", "Success", true));
-//    }
+    @PutMapping("update-service")
+    public ResponseEntity<ResponseDTO<String>> updateService(@Valid @RequestBody UpdateUsedServicesDto body) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.updateUsedService(body), "200", "Success", true));
+    }
 
     @GetMapping("list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listBooking(@RequestParam(defaultValue = "0") int page,

@@ -2,6 +2,7 @@ package com.tl.hotelproject.entity.client;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
+import com.tl.hotelproject.utils.StringUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -25,6 +26,7 @@ public class Client extends CommonObjectDTO {
 
     private String firstName;
     private String lastName;
+    private String name;
     private String address;
     private String sex;
     private String email;
@@ -33,4 +35,8 @@ public class Client extends CommonObjectDTO {
 
     @OneToMany(mappedBy = "client")
     private List<Booking> bookingList;
+
+    public void setName(){
+        this.name = StringUtils.removeAccents(this.getFirstName() + this.getLastName());
+    }
 }
