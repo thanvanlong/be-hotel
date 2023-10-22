@@ -1,5 +1,6 @@
 package com.tl.hotelproject.entity.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.utils.StringUtils;
@@ -31,6 +32,7 @@ public class Client extends CommonObjectDTO {
     private String note;
 
     @OneToMany(mappedBy = "client")
+    @JsonIgnore
     private List<Booking> bookingList;
 
     public void setName(){

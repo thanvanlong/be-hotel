@@ -1,5 +1,6 @@
 package com.tl.hotelproject.entity.room;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.utils.StringUtils;
@@ -36,6 +37,7 @@ public class Room extends CommonObjectDTO {
 //    private List<BookedRoom> bookedRooms;
 
     @OneToMany(mappedBy = "room")
+    @JsonIgnore
     private List<Booking> bookings;
 
     @ManyToMany

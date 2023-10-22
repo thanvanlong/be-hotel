@@ -1,5 +1,6 @@
 package com.tl.hotelproject.entity.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,6 @@ public class Services extends CommonObjectDTO {
     private String description;
 
     @OneToMany(mappedBy = "services")
+    @JsonIgnore
     private List<UsedServices> usedServices;
 }

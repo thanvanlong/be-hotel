@@ -1,6 +1,7 @@
 package com.tl.hotelproject.entity.services;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import jakarta.persistence.*;
@@ -29,6 +30,7 @@ public class UsedServices extends CommonObjectDTO {
 
     @ManyToOne
     @JoinColumn(name = "usedServices_id")
+    @JsonIgnore
     private Booking booking;
 
     @ManyToOne

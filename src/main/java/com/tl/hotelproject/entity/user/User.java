@@ -1,5 +1,6 @@
 package com.tl.hotelproject.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.booking.Booking;
@@ -41,9 +42,11 @@ public class User extends CommonObjectDTO implements UserDetails {
     private Collection<Role> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Booking> bookingList;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Bill> bills;
 
     @Override
