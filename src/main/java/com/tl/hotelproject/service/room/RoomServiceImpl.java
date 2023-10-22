@@ -76,7 +76,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room getRoomBySlugWithFeature(String slug) {
-        return this.roomRepo.findRoomWithFeatureRooms(slug);
+        return this.roomRepo.findRoomBySlugWithFeatureRooms(slug);
     }
 
     @Override
