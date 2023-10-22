@@ -2,7 +2,9 @@ package com.tl.hotelproject.controller;
 
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.room.Room;
+import com.tl.hotelproject.repo.FeatureRoomRepo;
 import com.tl.hotelproject.repo.RoomRepo;
+import com.tl.hotelproject.service.room.FeatureRoomService;
 import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.utils.CloudinaryUtils;
 import com.tl.hotelproject.utils.StringUtils;
@@ -33,16 +35,31 @@ public class RoomController {
     @Autowired
     private RoomRepo roomRepo;
 
+    @Autowired
+    private FeatureRoomService featureRoomService;
+
+    @GetMapping("/list-feature-room")
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> listFR(@RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "100") int limit,
+                                                                     @RequestParam(defaultValue = "id,desc") String[] sort,
+                                                                     @RequestParam(required = false) String search) {
+
+        Map<String, Object> frPage = featureRoomService.pagingSort(page, limit);
+
+
+        return ResponseEntity.ok(new ResponseDTO<>(frPage, "200", "Success", true));
+    }
+
     @GetMapping("/list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listRoom(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int limit,
                                                       @RequestParam(defaultValue = "id,desc") String[] sort,
                                                       @RequestParam(required = false) String search) {
 
-        Map<String, Object> zoomList = roomService.pagingSort(page, limit);
+        Map<String, Object> roomList = roomService.pagingSort(page, limit);
 
 
-        return ResponseEntity.ok(new ResponseDTO<>(zoomList, "200", "Success", true));
+        return ResponseEntity.ok(new ResponseDTO<>(roomList, "200", "Success", true));
     }
 
     @GetMapping("/search")
@@ -51,10 +68,10 @@ public class RoomController {
                                                                      @RequestParam(defaultValue = "id,desc") String[] sort,
                                                                      @RequestParam("search") String search) {
 
-        Map<String, Object> zoomList = roomService.pagingSortSearch(page, limit, search);
+        Map<String, Object> roomList = roomService.pagingSortSearch(page, limit, search);
 
 
-        return ResponseEntity.ok(new ResponseDTO<>(zoomList, "200", "Success", true));
+        return ResponseEntity.ok(new ResponseDTO<>(roomList, "200", "Success", true));
     }
 
     @GetMapping("/{slug}")

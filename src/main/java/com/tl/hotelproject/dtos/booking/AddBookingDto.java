@@ -22,7 +22,7 @@ public class AddBookingDto {
     // bookedRoom
     private Date checkin;
     private Date checkout;
-    private double price;
+//    private double price;
 
     // Room
     private String idRoom;

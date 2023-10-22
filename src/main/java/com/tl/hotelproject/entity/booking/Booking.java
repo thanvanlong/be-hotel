@@ -1,7 +1,6 @@
 package com.tl.hotelproject.entity.booking;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
-import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.entity.services.UsedServices;

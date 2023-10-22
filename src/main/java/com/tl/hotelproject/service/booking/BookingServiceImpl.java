@@ -3,7 +3,6 @@ package com.tl.hotelproject.service.booking;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.Metadata;
-import com.tl.hotelproject.entity.booking.BookedRoom;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
@@ -70,6 +69,7 @@ public class BookingServiceImpl implements BookingService{
             booking.setRoom(room);
             booking.setCheckin(body.getCheckin());
             booking.setCheckout(body.getCheckout());
+            booking.setPrice(room.getPrice());
             bookingRepo.save(booking);
 
             return "Book room is success!";

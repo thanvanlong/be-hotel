@@ -1,10 +1,7 @@
 package com.tl.hotelproject.entity.room;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,5 +21,6 @@ public class FeatureRoom extends CommonObjectDTO {
     private String name;
 
     @ManyToMany
+    @Transient
     private Set<Room> zooms;
 }
