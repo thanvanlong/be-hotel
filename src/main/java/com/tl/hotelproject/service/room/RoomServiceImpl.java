@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Map<String, Object> pagingSortSearch(int page, int limit, String search) {
         Pageable pagingSort = PageRequest.of(page, limit);
-        Page<Room> roomPage = roomRepo.findByNameContaining(search, pagingSort);
+        Page<Room> roomPage = roomRepo.findBySlugContaining(search, pagingSort);
 
         Metadata metadata = new Metadata();
         metadata.setPageNumber(roomPage.getNumber());

@@ -28,6 +28,11 @@ public class ClientController {
         return ResponseEntity.ok(new ResponseDTO<>(clientList, "200", "Success", true));
     }
 
+    @GetMapping("get/{id}")
+    public ResponseEntity<ResponseDTO<Client>> getDetail(@PathVariable("id") String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(clientService.getOne(id), "200", "Success", true));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> searchRoom(@RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int limit,
@@ -40,11 +45,11 @@ public class ClientController {
         return ResponseEntity.ok(new ResponseDTO<>(clientList, "200", "Success", true));
     }
 
-    @GetMapping("detail/{id}")
-    public ResponseEntity<ResponseDTO<Client>> getDetail(@PathVariable("id") String id){
-        Client client = new Client();
-        return ResponseEntity.ok(new ResponseDTO<>(client, "200", "Success", true));
-
-
-    }
+//    @GetMapping("detail/{id}")
+//    public ResponseEntity<ResponseDTO<Client>> getDetail(@PathVariable("id") String id){
+//        Client client = new Client();
+//        return ResponseEntity.ok(new ResponseDTO<>(client, "200", "Success", true));
+//
+//
+//    }
 }

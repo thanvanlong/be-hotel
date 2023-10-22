@@ -59,6 +59,7 @@ public class BookingServiceImpl implements BookingService{
             client.setTel(body.getTel());
             client.setEmail(body.getEmail());
             client.setSex(body.getSex());
+            client.setName();
             clientRepo.save(client);
 
 //            List<BookedRoom> roomList = new ArrayList<>();

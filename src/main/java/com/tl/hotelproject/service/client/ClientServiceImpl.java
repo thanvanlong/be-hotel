@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,13 @@ public class ClientServiceImpl implements ClientService{
     @Override
     public void save(Client client) throws Exception {
         clientRepo.save(client);
+    }
+
+    @Override
+    public Client getOne(String id) throws Exception {
+        Optional<Client> client = clientRepo.findById(id);
+        if(client.isPresent()) return client.get();
+        throw new Exception("Khong tim thay client");
     }
 
     @Override

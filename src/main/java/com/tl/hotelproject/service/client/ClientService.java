@@ -9,6 +9,8 @@ import java.util.Map;
 public interface ClientService {
     void save(Client client) throws Exception;
 
+    Client getOne(String id) throws Exception;
+
     Map<String, Object> pagingSort(int page, int limit);
     Map<String, Object> pagingSortSearch(int page, int limit, String search);
 }

@@ -20,8 +20,18 @@ public class CustomExceptionHandler {
         String message = "";
         for (ObjectError error :
                 ex.getBindingResult().getAllErrors()) {
-            message =  error.getDefaultMessage();;
+            message =  error.getDefaultMessage();
         }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(null, "400", message, false ));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDTO<Map<String, String>>> handleException(Exception e) {
+        Map<String, String> errors = new HashMap<>();
+
+        String message = "Đã có lỗi xảy ra";
+        if(e.getMessage() != null) message = e.getMessage();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(null, "400", message, false ));
     }

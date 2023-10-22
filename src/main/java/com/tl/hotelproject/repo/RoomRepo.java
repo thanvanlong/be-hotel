@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository()
 public interface RoomRepo extends JpaRepository<Room, String> {
 
-    Page<Room> findByNameContaining(String search, Pageable pageable);
+    Page<Room> findBySlugContaining(String search, Pageable pageable);
 
     Room getRoomByName(String name);
 

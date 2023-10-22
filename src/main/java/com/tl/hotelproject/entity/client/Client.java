@@ -3,10 +3,7 @@ package com.tl.hotelproject.entity.client;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.utils.StringUtils;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "clientTbl")
+@Table(name = "client")
 public class Client extends CommonObjectDTO {
     @Id
     @UuidGenerator
@@ -37,6 +34,6 @@ public class Client extends CommonObjectDTO {
     private List<Booking> bookingList;
 
     public void setName(){
-        this.name = StringUtils.removeAccents(this.getFirstName() + this.getLastName());
+        this.name = StringUtils.removeAccents(this.getFirstName() + " " + this.getLastName());
     }
 }

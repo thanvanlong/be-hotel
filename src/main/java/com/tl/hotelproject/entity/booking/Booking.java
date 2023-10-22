@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "bookingTbl")
+@Table(name = "booking")
 public class Booking extends CommonObjectDTO {
     @Id
     @UuidGenerator

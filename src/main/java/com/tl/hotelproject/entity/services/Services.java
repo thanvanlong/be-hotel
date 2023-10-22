@@ -1,10 +1,7 @@
 package com.tl.hotelproject.entity.services;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "servicesTbl")
+@Table(name = "services")
 public class Services extends CommonObjectDTO {
     @Id
     @UuidGenerator

@@ -25,7 +25,7 @@ public class Promotion extends CommonObjectDTO {
     private String image;
     private String slug;
 
-    public void setName() {
+    public void setSlug() {
         this.slug = StringUtils.slugify(this.name);
     }
 }

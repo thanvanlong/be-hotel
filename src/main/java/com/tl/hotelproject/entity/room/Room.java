@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roomTbl")
+@Table(name = "room")
 public class Room extends CommonObjectDTO {
     @Id
     @UuidGenerator

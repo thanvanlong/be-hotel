@@ -6,6 +6,7 @@ import com.tl.hotelproject.service.promotion.PromotionService;
 import com.tl.hotelproject.utils.CloudinaryUtils;
 import com.tl.hotelproject.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,26 +37,30 @@ public class PromotionController {
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.getBySlug(slug), "200", "Success", true));
     }
 
-    @PostMapping("/save")
+    @PostMapping(name = "/save", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> save(@RequestParam("name") String name,
                                                     @RequestParam(name = "description", required = false) String description,
                                                     @RequestParam(name = "file", required = false) MultipartFile file) throws Exception{
         Promotion promotion = new Promotion();
         promotion.setName(name);
         promotion.setDescription(description);
+        promotion.setSlug();
         promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.save(promotion), "200", "Success", true));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(name = "/update/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> update(@PathVariable("id") String id,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         Promotion promotion = promotionService.getById(id);
-        if(name != null) promotion.setName(name);
+        if(name != null) {
+            promotion.setName(name);
+            promotion.setSlug();
+        }
         if(description != null) promotion.setDescription(description);
         if(file != null) promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 

@@ -14,7 +14,7 @@ import org.hibernate.annotations.UuidGenerator;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "usedServicesTbl")
+@Table(name = "usedServices")
 public class UsedServices extends CommonObjectDTO {
     @Id
     @UuidGenerator

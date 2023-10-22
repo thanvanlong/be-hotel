@@ -25,6 +25,4 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDTO<>(null, "200", "Success", true));
     }
 
-
-
 }

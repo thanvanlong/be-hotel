@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "featureRoomTbl")
+@Table(name = "featureRoom")
 public class FeatureRoom extends CommonObjectDTO {
     @Id
     @UuidGenerator

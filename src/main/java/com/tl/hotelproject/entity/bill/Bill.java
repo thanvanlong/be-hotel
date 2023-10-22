@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "billTbl")
+@Table(name = "bill")
 public class Bill extends CommonObjectDTO {
     @Id
     @UuidGenerator
