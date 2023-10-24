@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService{
 
             Bill bill = new Bill();
             bill.setOrderId(UUID.randomUUID().toString());
-            bill.setTotalAmount(booking.getPrice());
+            bill.setTotalAmount(booking.getPrice() * booking.getQuantity());
             bill.setBooking(booking);
             bill.setPaymentFor(PaymentFor.Hotel);
 
