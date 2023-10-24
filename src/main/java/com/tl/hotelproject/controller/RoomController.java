@@ -1,6 +1,7 @@
 package com.tl.hotelproject.controller;
 
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.room.FeatureRoom;
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.FeatureRoomRepo;
 import com.tl.hotelproject.repo.RoomRepo;
@@ -10,6 +11,7 @@ import com.tl.hotelproject.utils.CloudinaryUtils;
 import com.tl.hotelproject.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/v1/room")
@@ -63,7 +62,7 @@ public class RoomController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponseDTO<Map<String, Object>>> searchRoom(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<ResponseDTO<?>> searchRoom(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int limit,
                                                                      @RequestParam(defaultValue = "id,desc") String[] sort,
                                                                      @RequestParam("search") String search) {
@@ -87,7 +86,7 @@ public class RoomController {
                                                         @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
 
                                                         @RequestParam("files") MultipartFile[] files) {
-
+        System.out.println(files[0].getOriginalFilename() + " " + files[0].getResource().getFilename());
         Room check = roomRepo.getRoomByName(name);
         if(check != null) {
             return ResponseEntity.ok(new ResponseDTO<String>("Ten khach san da bi trung", "500", "Failed", false));

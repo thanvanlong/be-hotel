@@ -1,24 +1,62 @@
 package com.tl.hotelproject.controller;
 
+import com.mservice.config.Environment;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
+import com.mservice.processor.CreateOrderMoMo;
+import com.mservice.shared.utils.LogUtils;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.promotion.Promotion;
+import com.tl.hotelproject.repo.PromotionRepo;
 import com.tl.hotelproject.service.promotion.PromotionService;
 import com.tl.hotelproject.utils.CloudinaryUtils;
 import com.tl.hotelproject.utils.StringUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/promotion")
+@RequestMapping("x  ")
 @CrossOrigin("*")
 public class PromotionController {
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private PromotionRepo promotionRepo;
+
+    @PostConstruct
+    public void init() {
+        LogUtils.init();
+        String requestId = String.valueOf(System.currentTimeMillis());
+        String orderId = String.valueOf(System.currentTimeMillis());
+        Long transId = 2L;
+        long amount = 5000;
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis());
+        String partnerClientId = "partnerClientId";
+        String orderInfo = "Pay With MoMo";
+        String returnURL = "momosdk:/";
+        String notifyURL = "https://webhook.site/df9d9c22-0473-4e6a-9cc3-d1d122e75936";
+        String callbackToken = "callbackToken";
+        String token = "";
+
+        Environment environment = Environment.selectEnv("dev");
+        PaymentResponse captureWalletMoMoResponse = null;
+        try {
+            captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET, Boolean.TRUE);
+            System.out.println(captureWalletMoMoResponse.getDeeplink());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     @GetMapping("/list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listPromotion(@RequestParam(defaultValue = "0") int page,
@@ -65,5 +103,10 @@ public class PromotionController {
         if(file != null) promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.update(promotion), "200", "Success", true));
+    }
+
+    @GetMapping("/sss")
+    public void check() {
+        System.out.println("long tv sss");
     }
 }

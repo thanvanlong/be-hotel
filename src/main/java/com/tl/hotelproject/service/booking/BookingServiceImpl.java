@@ -49,7 +49,7 @@ public class BookingServiceImpl implements BookingService{
 
 
     @Override
-    public String save(AddBookingDto body) throws Exception {
+    public String save(AddBookingDto body, int discount) throws Exception {
         Room room = roomService.findById(body.getIdRoom());
 
             // set BooedRoom
@@ -60,42 +60,43 @@ public class BookingServiceImpl implements BookingService{
 //            bookedRoomService.save(bookedRoom);
 
             // set new client
-            Client client = new Client();
-            client.setFirstName(body.getFirstName());
-            client.setLastName(body.getLastName());
-            client.setTel(body.getTel());
-            client.setEmail(body.getEmail());
-            client.setSex(body.getSex());
-            client.setName();
-            clientRepo.save(client);
+        Client client = new Client();
+        client.setFirstName(body.getFirstName());
+        client.setLastName(body.getLastName());
+        client.setTel(body.getTel());
+        client.setEmail(body.getEmail());
+        client.setSex(body.getSex());
+        client.setName();
+        clientRepo.save(client);
 
 //            List<BookedRoom> roomList = new ArrayList<>();
 //            roomList.add(bookedRoom);
 
-            Booking booking = new Booking();
-            booking.setClient(client);
-            booking.setRoom(room);
-            booking.setCheckin(body.getCheckin());
-            booking.setCheckout(body.getCheckout());
-            booking.setPrice(room.getPrice());
+        Booking booking = new Booking();
+        booking.setClient(client);
+        booking.setRoom(room);
+        booking.setCheckin(body.getCheckin());
+        booking.setCheckout(body.getCheckout());
+        booking.setPrice((int) (room.getPrice() * ((float) (100 - discount)/100)));
             if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
             booking.setQuantity(body.getQuantity());
 
             booking = bookingRepo.save(booking);
 
-            Bill bill = new Bill();
-            bill.setOrderId(UUID.randomUUID().toString());
-            bill.setTotalAmount(booking.getPrice() * booking.getQuantity());
+        Bill bill = new Bill();
+        bill.setOrderId(UUID.randomUUID().toString());
+        bill.setTotalAmount(booking.getPrice() * booking.getQuantity());
             bill.setBooking(booking);
             bill.setPaymentFor(PaymentFor.Hotel);
 
-            List<Bill> bills = new ArrayList<>();
-            bills.add(bill);
-            booking.setBills(bills);
+        List<Bill> bills = new ArrayList<>();
+        bills.add(bill);
+        booking.setBills(bills);
 
-            String url = this.billService.initBill(bill, body.getPaymentType());
+        String url = this.billService.initBill(bill, body.getPaymentType());
 
-            return url;
+
+        return url;
     }
 
     @Override

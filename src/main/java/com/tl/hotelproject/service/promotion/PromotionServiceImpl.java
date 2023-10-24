@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -62,5 +63,10 @@ public class PromotionServiceImpl implements PromotionService{
         response.put("metadata", metadata);
 
         return response;
+    }
+
+    @Override
+    public Promotion getPromotionByStartDateAndEndDate() {
+        return promotionRepo.findAllByStartDateIsBeforeAndEndDateIsAfter(LocalDate.now().plusDays(1), LocalDate.now().plusDays(1));
     }
 }

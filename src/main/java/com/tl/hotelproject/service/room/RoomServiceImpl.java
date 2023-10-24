@@ -1,7 +1,9 @@
 package com.tl.hotelproject.service.room;
 
 import com.tl.hotelproject.entity.Metadata;
+import com.tl.hotelproject.entity.room.FeatureRoom;
 import com.tl.hotelproject.entity.room.Room;
+import com.tl.hotelproject.repo.FeatureRoomRepo;
 import com.tl.hotelproject.repo.RoomRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,6 +23,8 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     private RoomRepo roomRepo;
 
+    @Autowired
+    private FeatureRoomRepo featureRoomRepo;
     @Override
     public void save(Room room) throws Exception {
         roomRepo.save(room);
@@ -62,7 +67,7 @@ public class RoomServiceImpl implements RoomService {
         metadata.setTotalItems(roomPage.getTotalElements());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("results", roomPage.getContent());
+        response.put("results", roomPage.getContent().subList(0, 3));
         response.put("metadata", metadata);
 
 

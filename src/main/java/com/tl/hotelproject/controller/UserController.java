@@ -22,6 +22,11 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<User>> register(@Valid @RequestBody User payload) {
+        try {
+            userService.save(payload);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(new ResponseDTO<>(null, "200", "Success", true));
     }
 

@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Service
 public interface BookingService {
-    String save(AddBookingDto body) throws Exception;
+    String save(AddBookingDto body, int discount) throws Exception;
 
     String updateUsedService(UpdateUsedServicesDto body) throws Exception;
 

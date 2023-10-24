@@ -15,4 +15,6 @@ public interface PromotionService {
     Promotion getBySlug(String slug);
 
     Map<String, Object> pagingSort(int page, int limit);
+
+    Promotion getPromotionByStartDateAndEndDate();
 }

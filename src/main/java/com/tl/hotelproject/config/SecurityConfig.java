@@ -69,11 +69,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of("http://192.168.1.8:5173", "http://localhost:5173"));
+                List.of("http://192.168.1.8:5173", "http://localhost:5173", "https://webhook.site", "https://webhook.site/df9d9c22-0473-4e6a-9cc3-d1d122e75936", "https://webhook.site/#!/df9d9c22-0473-4e6a-9cc3-d1d122e75936/"));
         configuration.setAllowedMethods(List.of("HEAD",
                 "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "ContentType", "Accept", "*"));
+        configuration.setAllowedHeaders(List.of("*"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

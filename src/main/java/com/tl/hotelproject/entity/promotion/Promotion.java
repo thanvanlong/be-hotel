@@ -8,14 +8,19 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "promotion")
-public class Promotion extends CommonObjectDTO {
+public class Promotion {
     @Id
     @UuidGenerator
     private String id;
@@ -24,6 +29,14 @@ public class Promotion extends CommonObjectDTO {
     private String description;
     private String image;
     private String slug;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private int discount;
+
+    @CreationTimestamp
+    private LocalDateTime createAt;
+    @UpdateTimestamp
+    private LocalDateTime updateAt;
 
     public void setSlug() {
         this.slug = StringUtils.slugify(this.name);

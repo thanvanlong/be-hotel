@@ -5,7 +5,9 @@ import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentType;
+import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.service.booking.BookingService;
+import com.tl.hotelproject.service.promotion.PromotionService;
 import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.utils.VnpayUtils;
 import jakarta.validation.Valid;
@@ -22,12 +24,20 @@ import java.util.Map;
 public class BookingController {
 
     @Autowired
+    private PromotionService promotionService;
+
+    @Autowired
     private BookingService bookingService;
 
     @PostMapping("client-booking")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
-            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body), "200","Success", true));
+            Promotion promotion = promotionService.getPromotionByStartDateAndEndDate();
+            if (promotion != null) {
+                return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, promotion.getDiscount()), "200","Success", true));
+            }
+
+            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, 0), "200","Success", true));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
