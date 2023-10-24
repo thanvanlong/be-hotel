@@ -7,6 +7,7 @@ import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentType;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.room.RoomService;
+import com.tl.hotelproject.utils.VnpayUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,12 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    private VnpayUtils vnpayUtils;
+
     @PostMapping("client-booking")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
-
-            if (body.getPaymentType() == PaymentType.Momo){
-
-            }
             return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body), "200","Success", true));
         } catch (Exception e) {
             throw new RuntimeException(e);

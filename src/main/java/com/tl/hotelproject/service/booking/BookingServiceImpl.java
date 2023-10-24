@@ -3,6 +3,7 @@ package com.tl.hotelproject.service.booking;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.Metadata;
+import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
@@ -10,6 +11,7 @@ import com.tl.hotelproject.entity.services.Services;
 import com.tl.hotelproject.entity.services.UsedServices;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.repo.ClientRepo;
+import com.tl.hotelproject.service.bill.BillService;
 import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.service.services.ServicesService;
 import com.tl.hotelproject.service.services.UsedServicesService;
@@ -39,6 +41,10 @@ public class BookingServiceImpl implements BookingService{
 
     @Autowired
     private ServicesService servicesService;
+
+    @Autowired
+    private BillService billService;
+
 
     @Override
     public String save(AddBookingDto body) throws Exception {
@@ -70,9 +76,19 @@ public class BookingServiceImpl implements BookingService{
             booking.setCheckin(body.getCheckin());
             booking.setCheckout(body.getCheckout());
             booking.setPrice(room.getPrice());
+
+            Bill bill = new Bill();
+            bill.setOrderId(UUID.randomUUID().toString());
+            bill.setTotalAmount(booking.getPrice());
+
+            List<Bill> bills = new ArrayList<>();
+            bills.add(bill);
+            booking.setBills(bills);
+
+            String url = this.billService.initBill(bill, body.getPaymentType());
             bookingRepo.save(booking);
 
-            return "Book room is success!";
+            return url;
     }
 
     @Override

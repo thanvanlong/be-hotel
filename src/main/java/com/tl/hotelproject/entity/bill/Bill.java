@@ -1,5 +1,6 @@
 package com.tl.hotelproject.entity.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.user.User;
@@ -21,9 +22,10 @@ public class Bill extends CommonObjectDTO {
     @UuidGenerator
     private String id;
 
-    private Date paymentDate;
+    private Date paymentDate = new Date();
     private double totalAmount;
     private String note;
+    private String orderId;
 
     @Enumerated(EnumType.ORDINAL)
     private PaymentType paymentType;
@@ -36,6 +38,7 @@ public class Bill extends CommonObjectDTO {
 
     @ManyToOne()
     @JoinColumn(name = "booking_id")
+    @JsonIgnore
     private Booking booking;
 
     @ManyToOne()

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.utils.StringUtils;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class Room extends CommonObjectDTO {
 
 //    @Column(columnDefinition = "text[]")
     @ElementCollection
+//    @Type(StringArrayType.class)
+//    @Column(
+//            name = "images",
+//            columnDefinition = "text[]"
+//    )
     private List<String> images;
 
 //    @OneToMany(mappedBy = "room")
