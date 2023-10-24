@@ -33,4 +33,9 @@ public class ServicesController {
         return ResponseEntity.ok(new ResponseDTO<>(this.servicesService.findById(id), "200", "Success", true)) ;
     }
 
+    @PostMapping("")
+    public ResponseEntity<ResponseDTO<String>> save(@RequestBody Services services) throws Exception {
+        return ResponseEntity.ok(new ResponseDTO<>(this.servicesService.save(services), "200", "Success", true)) ;
+    }
+
 }

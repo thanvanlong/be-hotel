@@ -53,4 +53,15 @@ public class ServicesServiceImpl implements ServicesService{
         response.put("metadata", metadata);
         return response;
     }
+
+    @Override
+    public String save(Services services) throws Exception {
+        this.servicesRepo.save(services);
+        return "Da them thanh cong";
+    }
+
+    @Override
+    public String update(Services services) throws Exception {
+        return null;
+    }
 }
