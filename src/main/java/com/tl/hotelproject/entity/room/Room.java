@@ -27,9 +27,11 @@ public class Room extends CommonObjectDTO {
     private String id;
 
     private String name;
-    private double price;
+    private int price;
     private String description;
     private String slug;
+    @Column(nullable = true)
+    private int quantity = 10;
 
 //    @Column(columnDefinition = "text[]")
     @ElementCollection

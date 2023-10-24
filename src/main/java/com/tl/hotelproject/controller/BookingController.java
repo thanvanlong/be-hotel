@@ -24,9 +24,6 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    @Autowired
-    private VnpayUtils vnpayUtils;
-
     @PostMapping("client-booking")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {

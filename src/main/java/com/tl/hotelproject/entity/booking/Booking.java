@@ -30,8 +30,15 @@ public class Booking extends CommonObjectDTO {
     private String note;
     private Date checkin;
     private Date checkout;
-    private double price;
+    private int price;
+
+    @Column(nullable = true)
+    private int quantity;
     private boolean isCheckedIn;
+
+    @Column(nullable = true)
+    private double totalAmount;
+    private BookingState bookingState;
 
 //    @OneToMany(mappedBy = "booking")
 //    private List<BookedRoom> bookedRooms;
@@ -53,5 +60,4 @@ public class Booking extends CommonObjectDTO {
 
     @OneToMany(mappedBy = "booking")
     private List<Bill> bills;
-
 }

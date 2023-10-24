@@ -31,10 +31,10 @@ public class Bill extends CommonObjectDTO {
     private PaymentType paymentType;
 
     @Enumerated(EnumType.ORDINAL)
-    private PaymentFor paymentFor;
+    private PaymentFor paymentFor = PaymentFor.Hotel;
 
     @Enumerated(EnumType.ORDINAL)
-    private PaymentState paymentState;
+    private PaymentState paymentState = PaymentState.Pending;
 
     @ManyToOne()
     @JoinColumn(name = "booking_id")

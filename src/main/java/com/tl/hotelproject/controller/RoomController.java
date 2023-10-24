@@ -82,7 +82,7 @@ public class RoomController {
 
     @PostMapping(value = "/save",  produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> saveRoom(@RequestParam("name") String name,
-                                                        @RequestParam(value = "price", required = false, defaultValue = "0") double price,
+                                                        @RequestParam(value = "price", required = false, defaultValue = "0") int price,
                                                         @RequestParam(value = "description", required = false, defaultValue = "") String description,
                                                         @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
 
@@ -134,7 +134,7 @@ public class RoomController {
     public ResponseEntity<ResponseDTO<String>> updateRoom(
                                                             @RequestParam(value = "id") String id,
                                                             @RequestParam(value = "name", required = false) String name,
-                                                            @RequestParam(value = "price", required = false) double price,
+                                                            @RequestParam(value = "price", required = false) int price,
                                                             @RequestParam(value = "description", required = false) String description,
                                                             @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
                                                             @RequestParam(value = "files", required = false)
@@ -180,8 +180,6 @@ public class RoomController {
 
             room.setImages(imgUrls);
         }
-
-        System.out.println(room);
 
         roomRepo.save(room);
 

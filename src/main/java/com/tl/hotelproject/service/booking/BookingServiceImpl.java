@@ -4,6 +4,8 @@ import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.Metadata;
 import com.tl.hotelproject.entity.bill.Bill;
+import com.tl.hotelproject.entity.bill.PaymentFor;
+import com.tl.hotelproject.entity.bill.PaymentState;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
@@ -76,17 +78,22 @@ public class BookingServiceImpl implements BookingService{
             booking.setCheckin(body.getCheckin());
             booking.setCheckout(body.getCheckout());
             booking.setPrice(room.getPrice());
+            if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
+            booking.setQuantity(body.getQuantity());
+
+            booking = bookingRepo.save(booking);
 
             Bill bill = new Bill();
             bill.setOrderId(UUID.randomUUID().toString());
             bill.setTotalAmount(booking.getPrice());
+            bill.setBooking(booking);
+            bill.setPaymentFor(PaymentFor.Hotel);
 
             List<Bill> bills = new ArrayList<>();
             bills.add(bill);
             booking.setBills(bills);
 
             String url = this.billService.initBill(bill, body.getPaymentType());
-            bookingRepo.save(booking);
 
             return url;
     }
