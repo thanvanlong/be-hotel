@@ -1,10 +1,5 @@
 package com.tl.hotelproject.controller;
 
-import com.mservice.config.Environment;
-import com.mservice.enums.RequestType;
-import com.mservice.models.PaymentResponse;
-import com.mservice.processor.CreateOrderMoMo;
-import com.mservice.shared.utils.LogUtils;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.repo.PromotionRepo;
@@ -23,7 +18,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 @RestController
-@RequestMapping("x  ")
+@RequestMapping("/api/v1/promotion")
 @CrossOrigin("*")
 public class PromotionController {
     @Autowired
@@ -31,32 +26,6 @@ public class PromotionController {
 
     @Autowired
     private PromotionRepo promotionRepo;
-
-    @PostConstruct
-    public void init() {
-        LogUtils.init();
-        String requestId = String.valueOf(System.currentTimeMillis());
-        String orderId = String.valueOf(System.currentTimeMillis());
-        Long transId = 2L;
-        long amount = 5000;
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        System.out.println(System.currentTimeMillis());
-        String partnerClientId = "partnerClientId";
-        String orderInfo = "Pay With MoMo";
-        String returnURL = "momosdk:/";
-        String notifyURL = "https://webhook.site/df9d9c22-0473-4e6a-9cc3-d1d122e75936";
-        String callbackToken = "callbackToken";
-        String token = "";
-
-        Environment environment = Environment.selectEnv("dev");
-        PaymentResponse captureWalletMoMoResponse = null;
-        try {
-            captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET, Boolean.TRUE);
-            System.out.println(captureWalletMoMoResponse.getDeeplink());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     @GetMapping("/list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listPromotion(@RequestParam(defaultValue = "0") int page,

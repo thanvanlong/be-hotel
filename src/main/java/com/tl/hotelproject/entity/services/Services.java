@@ -22,7 +22,7 @@ public class Services extends CommonObjectDTO {
 
     private String name;
     private String unity;
-    private double price;
+    private int price;
     private String description;
 
     @OneToMany(mappedBy = "services")

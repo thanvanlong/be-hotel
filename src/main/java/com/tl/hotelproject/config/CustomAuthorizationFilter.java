@@ -32,7 +32,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 request.getRequestURI().equals("/api/refresh") ||
                 request.getRequestURI().equals("/api/save") ||
                 request.getRequestURI().equals("/api/forget-password") ||
-                request.getRequestURI().contains("/api/user/active")){
+                request.getRequestURI().contains("/api/user/active") ||
+                request.getRequestURI().contains("/api/v1/bill/ipn-vnpay")){
             filterChain.doFilter(request, response);
         }else{
             String header = request.getHeader(AUTHORIZATION);

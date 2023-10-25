@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VnpayCreatePaymentDto {
-    private double amount;
+    private int amount;
     private String orderId;
     private String orderInfo;
 

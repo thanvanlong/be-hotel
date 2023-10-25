@@ -22,7 +22,7 @@ public class UsedServices extends CommonObjectDTO {
     private String id;
 
     private int quantity;
-    private double price;
+    private int price;
 
 //    @ManyToOne
 //    @JoinColumn(name = "usedServices_id")

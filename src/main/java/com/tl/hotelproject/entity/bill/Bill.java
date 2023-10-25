@@ -23,7 +23,7 @@ public class Bill extends CommonObjectDTO {
     private String id;
 
     private Date paymentDate = new Date();
-    private double totalAmount;
+    private int totalAmount;
     private String note;
     private String orderId;
 

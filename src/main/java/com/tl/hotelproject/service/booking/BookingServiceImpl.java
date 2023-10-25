@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService{
         bills.add(bill);
         booking.setBills(bills);
 
-        String url = this.billService.initBill(bill, body.getPaymentType());
+        String url = this.billService.initBill(booking, body.getPaymentType());
 
 
         return url;

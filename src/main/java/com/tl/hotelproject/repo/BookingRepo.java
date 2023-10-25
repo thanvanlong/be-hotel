@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.room WHERE b.id = :bookingId")
     Booking getBookingWithRelationship(@Param("bookingId") String bookingId);
+
+    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.client LEFT JOIN FETCH b.bills b1 WHERE b1.id = :billId")
+    Booking getBookingByBill(@Param("billId") String billId);
 }
