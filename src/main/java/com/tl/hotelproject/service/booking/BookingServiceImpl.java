@@ -157,4 +157,29 @@ public class BookingServiceImpl implements BookingService{
 
         return response;
     }
+
+    @Override
+    public String checkIn(String id) throws Exception{
+        Booking booking = this.findById(id);
+        booking.setCheckedIn(true);
+        bookingRepo.save(booking);
+        return "checkin success";
+    }
+
+    @Override
+    public Map<String, Object> search(String search, int page, int limit) {
+        Pageable pagingSort = PageRequest.of(page, limit);
+        Page<Booking>bookingPage = bookingRepo.search(search, pagingSort);
+
+        Metadata metadata = new Metadata();
+        metadata.setPageNumber(bookingPage.getNumber());
+        metadata.setPageSize(bookingPage.getSize());
+        metadata.setTotalPages(bookingPage.getTotalPages());
+        metadata.setTotalItems(bookingPage.getTotalElements());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", bookingPage.getContent());
+        response.put("metadata", metadata);
+        return response;
+    }
 }

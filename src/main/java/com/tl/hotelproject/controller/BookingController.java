@@ -4,7 +4,6 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.ResponseDTO;
-import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.entity.services.UsedServices;
@@ -13,20 +12,13 @@ import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.mail.EmailSender;
 import com.tl.hotelproject.service.promotion.PromotionService;
 import jakarta.validation.Valid;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 
 @RestController
@@ -92,6 +84,18 @@ public class BookingController {
                 .body(pdfBytes);
     }
 
+    @GetMapping("search")
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> search(@RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int limit,
+                                                                       @RequestParam(defaultValue = "id,desc") String[] sort,
+                                                                       @RequestParam("search") String search) {
+
+        Map<String, Object> bookingSearch = bookingService.search(search, page, limit);
+
+
+        return ResponseEntity.ok(new ResponseDTO<>(bookingSearch, "200", "Success", true));
+    }
+
     @PostMapping("client-booking")
     public ResponseEntity<ResponseDTO<String>> booking(@RequestBody AddBookingDto body) {
         try {
@@ -118,6 +122,11 @@ public class BookingController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("check-in/{id}")
+    public ResponseEntity<ResponseDTO<String>> checkIn(@PathVariable("id") String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkIn(id), "200", "success", true));
     }
 
     @PutMapping("update-service/{id}")

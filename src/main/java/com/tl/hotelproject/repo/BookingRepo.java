@@ -1,6 +1,9 @@
 package com.tl.hotelproject.repo;
 
 import com.tl.hotelproject.entity.booking.Booking;
+import com.tl.hotelproject.entity.room.Room;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +13,11 @@ import org.springframework.stereotype.Repository;
 public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.room WHERE b.id = :bookingId")
     Booking getBookingWithRelationship(@Param("bookingId") String bookingId);
+
+    @Query("SELECT b  FROM Booking b" +
+//            " LEFT JOIN FETCH b.user LEFT JOIN FETCH b.usedServices " +
+            " LEFT JOIN FETCH b.client c WHERE c.name LIKE %:search% or c.email like %:search% or c.tel like %:search%")
+    Page<Booking> search(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.client LEFT JOIN FETCH b.bills b1 WHERE b1.id = :billId")
     Booking getBookingByBill(@Param("billId") String billId);
