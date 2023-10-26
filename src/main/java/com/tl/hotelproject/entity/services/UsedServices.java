@@ -20,6 +20,7 @@ public class UsedServices extends CommonObjectDTO {
     @Id
     @UuidGenerator
     private String id;
+    private String name;
 
     private int quantity;
     private int price;
@@ -42,5 +43,9 @@ public class UsedServices extends CommonObjectDTO {
         newServices.setId(servicesId);
 
         this.services = newServices;
+    }
+
+    public void setName(){
+        this.name = this.getServices().getName();
     }
 }

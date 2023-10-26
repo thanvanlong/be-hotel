@@ -109,6 +109,7 @@ public class BookingServiceImpl implements BookingService{
         usedServices.setServices(services.getId());
         usedServices.setQuantity(body.getQuantity());
         usedServices.setPrice(services.getPrice());
+        usedServices.setName();
 
         usedServices = this.usedServicesService.save(usedServices);
 
