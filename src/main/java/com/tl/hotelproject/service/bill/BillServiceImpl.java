@@ -1,5 +1,10 @@
 package com.tl.hotelproject.service.bill;
 
+import com.mservice.config.Environment;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
+import com.mservice.processor.CreateOrderMoMo;
+import com.mservice.shared.utils.LogUtils;
 import com.tl.hotelproject.dtos.bills.VnpayCreatePaymentDto;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentState;
@@ -10,6 +15,7 @@ import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.repo.BillRepo;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.mail.EmailSender;
+import com.tl.hotelproject.utils.StringUtils;
 import com.tl.hotelproject.utils.VnpayUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +77,34 @@ public class BillServiceImpl implements BillService{
         String url = "";
         if (type == PaymentType.Momo){
             bill.setPaymentType(PaymentType.Momo);
+            bill.setRequestId(UUID.randomUUID().toString());
+
+            LogUtils.init();
+            Environment environment = Environment.selectEnv("dev");
+
+            PaymentResponse captureWalletMoMoResponse = null;
+            try {
+                captureWalletMoMoResponse = CreateOrderMoMo.process(environment,
+                        bill.getOrderId(),
+                        bill.getRequestId(),
+                        Long.toString(bill.getTotalAmount()),
+                        "Thanh toán Momo",
+                        "momosdk:/",
+                        "momosdk:/",
+                        "",
+                        RequestType.CAPTURE_WALLET,
+                        Boolean.TRUE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(captureWalletMoMoResponse);
+            url = captureWalletMoMoResponse.getPayUrl();
         } else if (type == PaymentType.Zalopay) {
             bill.setPaymentType(PaymentType.Zalopay);
+
         } else if (type == PaymentType.Vnpay) {
             bill.setPaymentType(PaymentType.Vnpay);
+
             VnpayCreatePaymentDto createPaymentDto = new VnpayCreatePaymentDto();
             createPaymentDto.setAmount(bill.getTotalAmount());
             createPaymentDto.setOrderInfo("Thanh toán VNPAY");

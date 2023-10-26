@@ -1,5 +1,10 @@
 package com.tl.hotelproject.controller;
 
+import com.mservice.config.Environment;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
+import com.mservice.processor.CreateOrderMoMo;
+import com.mservice.shared.utils.LogUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
@@ -11,6 +16,7 @@ import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.mail.EmailSender;
 import com.tl.hotelproject.service.promotion.PromotionService;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -37,6 +44,39 @@ public class BookingController {
 
     @Autowired
     private EmailSender emailSender;
+
+//    @PostConstruct
+    public void init(){
+        LogUtils.init();
+        String requestId = String.valueOf(System.currentTimeMillis());
+        String orderId = String.valueOf(System.currentTimeMillis());
+        Long transId = 2L;
+        long amount = 5000;
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis());
+        String partnerClientId = "partnerClientId";
+        String orderInfo = "Pay With MoMo";
+        String returnURL = "momosdk:/";
+        String notifyURL = "momosdk:/";
+        String callbackToken = "callbackToken";
+        String token = "";
+
+        Environment environment = Environment.selectEnv("dev");
+
+
+//      Remember to change the IDs at enviroment.properties file
+
+        /***
+         * create payment with capture momo wallet
+         */
+        PaymentResponse captureWalletMoMoResponse = null;
+        try {
+            captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET, Boolean.TRUE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(captureWalletMoMoResponse.getPayUrl());
+    }
 
     @GetMapping("/export-bill")
     public ResponseEntity<byte[]> downloadPDF(@RequestParam("id") String id) throws Exception {

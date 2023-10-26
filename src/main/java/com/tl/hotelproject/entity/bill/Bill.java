@@ -26,6 +26,7 @@ public class Bill extends CommonObjectDTO {
     private int totalAmount;
     private String note;
     private String orderId;
+    private String requestId;
 
     @Enumerated(EnumType.ORDINAL)
     private PaymentType paymentType;
