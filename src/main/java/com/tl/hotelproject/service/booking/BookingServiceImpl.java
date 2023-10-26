@@ -78,16 +78,17 @@ public class BookingServiceImpl implements BookingService{
         booking.setCheckin(body.getCheckin());
         booking.setCheckout(body.getCheckout());
         booking.setPrice((int) (room.getPrice() * ((float) (100 - discount)/100)));
-            if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
-            booking.setQuantity(body.getQuantity());
+        if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
+        booking.setQuantity(body.getQuantity());
 
-            booking = bookingRepo.save(booking);
+        booking.setTotalAmount();
+        booking = bookingRepo.save(booking);
 
         Bill bill = new Bill();
         bill.setOrderId(UUID.randomUUID().toString());
         bill.setTotalAmount(booking.getPrice() * booking.getQuantity());
-            bill.setBooking(booking);
-            bill.setPaymentFor(PaymentFor.Hotel);
+        bill.setBooking(booking);
+        bill.setPaymentFor(PaymentFor.Hotel);
 
         List<Bill> bills = new ArrayList<>();
         bills.add(bill);
@@ -100,21 +101,25 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
-    public String updateUsedService(UpdateUsedServicesDto body) throws Exception {
-        Booking booking = this.getBookingWithRelationship(body.getId());
-        Services services = this.servicesService.findById(body.getId());
+    public String updateUsedService(String id, UpdateUsedServicesDto[] body) throws Exception {
+        Booking booking = this.findById(id);
 
-        // tao usedService
-        UsedServices usedServices = new UsedServices();
-        usedServices.setServices(services.getId());
-        usedServices.setQuantity(body.getQuantity());
-        usedServices.setPrice(services.getPrice());
-        usedServices.setName();
+        List<UsedServices> listT = booking.getUsedServices();
+        for (UpdateUsedServicesDto data: body) {
+            Services services = this.servicesService.findById(data.getIdService());
+            UsedServices usedServices = new UsedServices();
+            usedServices.setServices(services);
+            usedServices.setQuantity(data.getQuantity());
+            usedServices.setPrice(services.getPrice());
+            usedServices.setBooking(booking);
+            usedServices.setName();
+            usedServices = this.usedServicesService.save(usedServices);
 
-        usedServices = this.usedServicesService.save(usedServices);
+            listT.add(usedServices);
 
-        List<UsedServices> listUsed = booking.getUsedServices();
-        listUsed.add(usedServices);
+        }
+        booking.setUsedServices(listT);
+        booking.setTotalAmount();
 
         bookingRepo.save(booking);
 
@@ -130,7 +135,8 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Booking getBookingWithRelationship(String id){
-       return this.bookingRepo.getBookingWithRelationship(id);
+//       Booking this.bookingRepo.findById(id);
+        return null;
     }
 
     @Override

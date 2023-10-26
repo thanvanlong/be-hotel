@@ -115,8 +115,9 @@ public class RoomController {
                 }
                 imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(name)));
             }
-            List<String> arrImg = Arrays.asList(imgUrls.toString());
-            room.setImages(arrImg);
+//            List<String> arrImg = Arrays.asList(imgUrls.toString());
+            if(!imgUrls.isEmpty()) room.setImages(imgUrls);
+            else System.out.println("khong co anh");
 
         } catch (IOException e) {
             return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));

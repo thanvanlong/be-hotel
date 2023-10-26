@@ -30,7 +30,7 @@ public class UsedServices extends CommonObjectDTO {
 //    private BookedRoom bookedRoom;
 
     @ManyToOne
-    @JoinColumn(name = "usedServices_id")
+    @JoinColumn(name = "booking_id")
     @JsonIgnore
     private Booking booking;
 
@@ -38,12 +38,12 @@ public class UsedServices extends CommonObjectDTO {
     @JoinColumn(name = "services_id")
     private Services services;
 
-    public void setServices(String servicesId) {
-        Services newServices = new Services();
-        newServices.setId(servicesId);
-
-        this.services = newServices;
-    }
+//    public void setServices(String servicesId) {
+//        Services newServices = new Services();
+//        newServices.setId(servicesId);
+//
+//        this.services = newServices;
+//    }
 
     public void setName(){
         this.name = this.getServices().getName();

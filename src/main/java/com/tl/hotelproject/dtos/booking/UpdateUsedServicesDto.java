@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateUsedServicesDto {
-    private String id;
     private String idService;
     private int quantity;
 }

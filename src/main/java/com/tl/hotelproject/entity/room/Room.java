@@ -29,6 +29,7 @@ public class Room extends CommonObjectDTO {
     private String name;
     private int price;
     private String description;
+    private String search;
     private String slug;
     @Column(nullable = true)
     private int quantity = 10;
@@ -70,5 +71,6 @@ public class Room extends CommonObjectDTO {
     public void setName(String name) {
         this.name = name;
         this.slug = StringUtils.slugify(name);
+        this.search = StringUtils.removeAccents(name.toLowerCase());
     }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 public interface BookingService {
     String save(AddBookingDto body, int discount) throws Exception;
 
-    String updateUsedService(UpdateUsedServicesDto body) throws Exception;
+    String updateUsedService(String id, UpdateUsedServicesDto[] body) throws Exception;
 
     Booking findById(String id) throws Exception;
     Booking getBookingWithRelationship(String id);

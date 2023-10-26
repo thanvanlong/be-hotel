@@ -14,6 +14,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @AllArgsConstructor
@@ -37,8 +38,8 @@ public class Booking extends CommonObjectDTO {
     private boolean isCheckedIn;
 
     @Column(nullable = true)
-    private double totalAmount;
-    private BookingState bookingState;
+    private int totalAmount;
+    private BookingState bookingState = BookingState.Init;
 
 //    @OneToMany(mappedBy = "booking")
 //    private List<BookedRoom> bookedRooms;
@@ -60,4 +61,13 @@ public class Booking extends CommonObjectDTO {
 
     @OneToMany(mappedBy = "booking")
     private List<Bill> bills;
+
+    public void setTotalAmount() {
+        int totalAmount = 0;
+        if(usedServices != null) totalAmount = usedServices.stream()
+                .map(x -> x.getPrice() * x.getQuantity())
+                .reduce(0, Integer::sum);
+
+        this.totalAmount = totalAmount + this.quantity * this.price;
+    }
 }

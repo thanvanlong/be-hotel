@@ -8,6 +8,7 @@ import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.entity.services.UsedServices;
+import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.mail.EmailSender;
 import com.tl.hotelproject.service.promotion.PromotionService;
@@ -40,11 +41,18 @@ public class BookingController {
     private BookingService bookingService;
 
     @Autowired
+    private BookingRepo bookingRepo;
+
+    @Autowired
     private EmailSender emailSender;
 
     @GetMapping("/export-bill")
     public ResponseEntity<byte[]> downloadPDF(@RequestParam("id") String id) throws Exception {
         Booking booking = this.bookingService.findById(id);
+        booking.setTotalAmount();
+
+        bookingRepo.save(booking);
+
         List<UsedServices> services = booking.getUsedServices();
 
         Map<String, Object> body = new HashMap<>();
@@ -54,7 +62,7 @@ public class BookingController {
         body.put("id", booking.getId());
         body.put("createdDate", new Date().getTime());
         body.put("paymentDate", new Date().getTime());
-        body.put("s", services == null);
+        body.put("s", services == null ? false : true);
         body.put("services", services);
         body.put("totalAmount", booking.getTotalAmount());
 
@@ -112,9 +120,9 @@ public class BookingController {
         }
     }
 
-    @PutMapping("update-service")
-    public ResponseEntity<ResponseDTO<String>> updateService(@Valid @RequestBody UpdateUsedServicesDto body) throws Exception{
-        return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.updateUsedService(body), "200", "Success", true));
+    @PutMapping("update-service/{id}")
+    public ResponseEntity<ResponseDTO<String>> updateService(@PathVariable("id") String id, @Valid @RequestBody UpdateUsedServicesDto[] body) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.updateUsedService(id, body), "200", "Success", true));
     }
 
     @GetMapping("list")
