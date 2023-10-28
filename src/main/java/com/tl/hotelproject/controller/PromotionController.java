@@ -47,10 +47,11 @@ public class PromotionController {
 
     @PostMapping(name = "/save", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> save(@RequestParam("name") String name,
-                                                    @RequestParam(name = "description", required = false) String description,
+                                                    @RequestParam(name = "description", required = false, defaultValue = "") String description,
                                                     @RequestParam(name = "startDate") LocalDate startDate,
                                                     @RequestParam("endDate") LocalDate endDate,
-                                                    @RequestParam(value = "state", required = false) State state,
+                                                    @RequestParam(value = "state", required = false, defaultValue = "0") State state,
+                                                    @RequestParam(value = "discount") Integer discount,
                                                     @RequestParam(name = "file", required = false) MultipartFile file) throws Exception{
         Promotion promotion = new Promotion();
         promotion.setName(name);
@@ -58,6 +59,8 @@ public class PromotionController {
         promotion.setEndDate(endDate);
         promotion.setDescription(description);
         promotion.setSlug();
+        promotion.setState(state);
+        promotion.setDiscount(discount);
         promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.save(promotion), "200", "Success", true));
@@ -70,6 +73,7 @@ public class PromotionController {
             @RequestParam(name = "startDate", required = false) LocalDate startDate,
             @RequestParam(value = "endDate", required = false) LocalDate endDate,
             @RequestParam(value = "state", required = false) State state,
+            @RequestParam(value = "discount", required = false) Integer discount,
             @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         Promotion promotion = promotionService.getById(id);
@@ -81,6 +85,7 @@ public class PromotionController {
         if(startDate != null) promotion.setStartDate(startDate);
         if(endDate != null) promotion.setStartDate(endDate);
         if(state != null) promotion.setState(state);
+        if(discount!= null) promotion.setDiscount(discount);
         if(file != null) promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.update(promotion), "200", "Success", true));
