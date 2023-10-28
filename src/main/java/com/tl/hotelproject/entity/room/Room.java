@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -34,9 +35,11 @@ public class Room extends CommonObjectDTO {
     private String slug;
     @Column(nullable = true)
     private int quantity = 10;
+    @Column(nullable = true)
+    private boolean isDelete = false;
 
 //    @Column(columnDefinition = "text[]")
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
 //    @Type(StringArrayType.class)
 //    @Column(
 //            name = "images",
@@ -47,7 +50,7 @@ public class Room extends CommonObjectDTO {
 //    @OneToMany(mappedBy = "room")
 //    private List<BookedRoom> bookedRooms;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Booking> bookings;
 
@@ -74,4 +77,5 @@ public class Room extends CommonObjectDTO {
         this.slug = StringUtils.slugify(name);
         this.search = StringUtils.removeAccents(name.toLowerCase());
     }
+
 }

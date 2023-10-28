@@ -45,7 +45,7 @@ public class Booking extends CommonObjectDTO {
 //    @OneToMany(mappedBy = "booking")
 //    private List<BookedRoom> bookedRooms;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
     private List<UsedServices> usedServices;
 
     @ManyToOne

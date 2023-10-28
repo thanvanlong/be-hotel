@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -28,5 +29,32 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
             "WHERE (b.bookingState = 2) AND YEAR(b.createdAt) = :year " +
             "GROUP BY MONTH(b.createdAt)")
     List<Object[]> calculateRevenueByMonth(int year);
+
+    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
+            "FROM Booking b " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "GROUP BY b.room.id, b.room.name")
+    List<Object[]> calculateRoomRevenueAndBookings(int year);
+
+    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
+            "FROM Booking b " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "and MONTH(b.createdAt) = :month "+
+            "GROUP BY b.room.id, b.room.name")
+    List<Object[]> calculateRoomRevenueAndBookings(int year, int month);
+
+    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
+            "FROM Booking b " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
+            "GROUP BY b.room.id, b.room.name")
+    List<Object[]> calculateRoomRevenueAndBookings(int year, int month, int day);
+
+    @Query("SELECT b FROM Booking b WHERE b.createdAt >= :sevenDaysAgo AND b.createdAt <= :currentDate")
+    List<Object> findDataWithin7Days(@Param("sevenDaysAgo") Date sevenDaysAgo, @Param("currentDate") Date currentDate);
+
+    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b)  FROM Booking b WHERE b.createdAt = :date " +
+            "GROUP BY b.room.id, b.room.name")
+    List<Object[]> findDataForDate(@Param("date") Date date);
 
 }

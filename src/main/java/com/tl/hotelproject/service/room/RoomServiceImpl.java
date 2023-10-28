@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public  Map<String, Object> pagingSort(int page, int limit) {
-        Pageable pagingSort = PageRequest.of(page, limit);
+        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, "createdAt");
         Page<Room> roomPage = roomRepo.findAll(pagingSort);
 
         Metadata metadata = new Metadata();
@@ -67,7 +68,7 @@ public class RoomServiceImpl implements RoomService {
         metadata.setTotalItems(roomPage.getTotalElements());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("results", roomPage.getContent().subList(0, 3));
+        response.put("results", roomPage.getContent());
         response.put("metadata", metadata);
 
 

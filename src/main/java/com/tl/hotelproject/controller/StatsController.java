@@ -2,6 +2,7 @@ package com.tl.hotelproject.controller;
 
 import com.google.gson.Gson;
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.BillRepo;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.repo.RoomRepo;
@@ -23,6 +24,15 @@ class Revenue {
     private int value = 0;
 }
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class RoomStats {
+    private String type;
+    private String name;
+    private long value;
+}
+
 @RestController
 @RequestMapping("api/v1/stats")
 @CrossOrigin("*")
@@ -36,63 +46,212 @@ public class StatsController {
     @Autowired
     private RoomRepo roomRepo;
 
-
-//[
-//    {
-//        "year": "1991",
-//            "value": 3,
-//            "type": "Lon"
-//    },
-//    {
-//        "year": "1992",
-//            "value": 4,
-//            "type": "Lon"
-//    }
-//]
     @GetMapping("stats-rooms")
-    public ResponseEntity<ResponseDTO<Map<String, Object>>> statsRooms() {
+    public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRooms(
+            @RequestParam("year") int year,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "day", required = false) Integer day
+    ) throws Exception{
+
+        if(day != null) {
+            if(month == null) throw new Exception("du lieu khong dung");
+            List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
+            List<Object[]> roomList = roomRepo.listRoomSelect();
+
+            List<RoomStats> roomStats = new ArrayList<>();
+
+            for (Object[] room : roomList) {
+                boolean check = false;
+                for(Object[] object: result) {
+                    String id = object[0].toString();
+                    if(room[1].toString().equals(id)){
+                        check = true;
+                        String name = object[1].toString();
+                        String revenue = object[2].toString();
+                        String count = object[3].toString();
+
+                        RoomStats roomStats1 = new RoomStats();
+                        roomStats1.setName(name);
+                        roomStats1.setType("Doanh thu");
+                        roomStats1.setValue(Long.parseLong(revenue));
+
+                        RoomStats roomStats2 = new RoomStats();
+                        roomStats2.setName(name);
+                        roomStats2.setType("Luot thue");
+                        roomStats2.setValue(Integer.parseInt(count));
+
+                        roomStats.add(roomStats1);
+                        roomStats.add(roomStats2);
+
+                        break;
+                    }
+                }
+                if(!check) {
+                    RoomStats roomStats1 = new RoomStats();
+                    roomStats1.setName(room[0].toString());
+                    roomStats1.setType("Doanh thu");
+                    roomStats1.setValue(0);
+
+                    RoomStats roomStats2 = new RoomStats();
+                    roomStats2.setName(room[0].toString());
+                    roomStats2.setType("Luot thue");
+                    roomStats2.setValue(0);
+
+                    roomStats.add(roomStats1);
+                    roomStats.add(roomStats2);
+                }
+            }
+            return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
+        }
+
+        if(month != null) {
+
+            List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
+            List<Object[]> roomList = roomRepo.listRoomSelect();
+
+            List<RoomStats> roomStats = new ArrayList<>();
+
+            for (Object[] room : roomList) {
+                boolean check = false;
+                for(Object[] object: result) {
+                    String id = object[0].toString();
+                    if(room[1].toString().equals(id)){
+                        check = true;
+                        String name = object[1].toString();
+                        String revenue = object[2].toString();
+                        String count = object[3].toString();
+
+                        RoomStats roomStats1 = new RoomStats();
+                        roomStats1.setName(name);
+                        roomStats1.setType("Doanh thu");
+                        roomStats1.setValue(Long.parseLong(revenue));
+
+                        RoomStats roomStats2 = new RoomStats();
+                        roomStats2.setName(name);
+                        roomStats2.setType("Luot thue");
+                        roomStats2.setValue(Integer.parseInt(count));
+
+                        roomStats.add(roomStats1);
+                        roomStats.add(roomStats2);
+
+                        break;
+                    }
+                }
+                if(!check) {
+                    RoomStats roomStats1 = new RoomStats();
+                    roomStats1.setName(room[0].toString());
+                    roomStats1.setType("Doanh thu");
+                    roomStats1.setValue(0);
+
+                    RoomStats roomStats2 = new RoomStats();
+                    roomStats2.setName(room[0].toString());
+                    roomStats2.setType("Luot thue");
+                    roomStats2.setValue(0);
+
+                    roomStats.add(roomStats1);
+                    roomStats.add(roomStats2);
+                }
+            }
+
+            return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
+        }
+
+        List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year);
+        List<Object[]> roomList = roomRepo.listRoomSelect();
+
+        List<RoomStats> roomStats = new ArrayList<>();
+
+        for (Object[] room : roomList) {
+            boolean check = false;
+            for(Object[] object: result) {
+                String id = object[0].toString();
+                if(room[1].toString().equals(id)){
+                    check = true;
+                    String name = object[1].toString();
+                    String revenue = object[2].toString();
+                    String count = object[3].toString();
+
+                    RoomStats roomStats1 = new RoomStats();
+                    roomStats1.setName(name);
+                    roomStats1.setType("Doanh thu");
+                    roomStats1.setValue(Long.parseLong(revenue));
+
+                    RoomStats roomStats2 = new RoomStats();
+                    roomStats2.setName(name);
+                    roomStats2.setType("Luot thue");
+                    roomStats2.setValue(Integer.parseInt(count));
+
+                    roomStats.add(roomStats1);
+                    roomStats.add(roomStats2);
+
+                    break;
+                }
+            }
+            if(!check) {
+                RoomStats roomStats1 = new RoomStats();
+                roomStats1.setName(room[0].toString());
+                roomStats1.setType("Doanh thu");
+                roomStats1.setValue(0);
+
+                RoomStats roomStats2 = new RoomStats();
+                roomStats2.setName(room[0].toString());
+                roomStats2.setType("Luot thue");
+                roomStats2.setValue(0);
+
+                roomStats.add(roomStats1);
+                roomStats.add(roomStats2);
+            }
+        }
 
 
-        return ResponseEntity.ok(new ResponseDTO<>(new HashMap<>(), "200", "Success", true));
+        return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
     }
 
     @GetMapping("stats-room")
     public ResponseEntity<ResponseDTO<Map<String, String>>> statsRoom(){
+        Date currentDate = new Date();
+
+        // Tạo một đối tượng Calendar và đặt nó thành ngày hiện tại
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+
+        Date sevenDaysAgo = calendar.getTime();
+
+        System.out.println("Ngày hiện tại: " + currentDate);
+        System.out.println("Ngày 7 ngày trước: " + sevenDaysAgo);
+
         return ResponseEntity.ok(new ResponseDTO<>(new HashMap<>(), "200", "Success", true));
     }
 
-//    @PostConstruct
-//    public void test(){
-//        List<Object[]> result = bookingRepo.calculateRevenueByMonth(Integer.parseInt("2023"));
-//        System.out.println(new Gson().toJson(result));
-//
-//        Map<String, String> months = new HashMap<>();
-//        months.put("1", "0");
-//        months.put("2", "0");
-//        months.put("3", "0");
-//        months.put("4", "0");
-//        months.put("5", "0");
-//        months.put("6", "0");
-//        months.put("7", "0");
-//        months.put("8", "0");
-//        months.put("9", "0");
-//        months.put("10", "0");
-//        months.put("11", "0");
-//        months.put("12", "0");
-//
-//        for (Object[] row : result) {
-//            String month = row[0].toString();
-//            String revenue = row[1].toString();
-//            months.put(month, revenue);
-//        }
-//
-//        System.out.println(months);
-//
-//    }
+    @PostConstruct
+    public void test(){
+        Date currentDate = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date sevenDaysAgo = calendar.getTime();
+
+        List<Date> dateList = new ArrayList<>();
+        calendar.setTime(sevenDaysAgo);
+        for (int i = 0; i < 7; i++) {
+            dateList.add(calendar.getTime());
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        for (Date date : dateList) {
+            List<Object[]> dataForDate = this.bookingRepo.findDataForDate(date);
+            System.out.println(new Gson().toJson(dataForDate));
+        }
+
+
+    }
 
     @GetMapping("revenue")
-    public ResponseEntity<ResponseDTO<Revenue[]>> statsRevenue(@RequestParam("year") String year){
-        List<Object[]> result = bookingRepo.calculateRevenueByMonth(Integer.parseInt(year));
+    public ResponseEntity<ResponseDTO<Revenue[]>> statsRevenue(@RequestParam("year") int year){
+        List<Object[]> result = bookingRepo.calculateRevenueByMonth(year);
 
         Revenue[] revenues = new Revenue[12];
 

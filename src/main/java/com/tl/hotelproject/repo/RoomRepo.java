@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository()
 public interface RoomRepo extends JpaRepository<Room, String> {
 
@@ -20,4 +22,7 @@ public interface RoomRepo extends JpaRepository<Room, String> {
 
     @Query("SELECT r FROM Room r LEFT JOIN FETCH r.featureRooms LEFT join FETCH r.images WHERE r.slug = :slug")
     Room findRoomBySlugWithFeatureRooms(@Param("slug") String slug);
+
+    @Query("SELECT r.name, r.id FROM Room r WHERE r.isDelete = false ")
+    List<Object[]> listRoomSelect();
 }

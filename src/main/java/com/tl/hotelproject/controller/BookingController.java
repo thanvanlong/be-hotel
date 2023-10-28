@@ -45,39 +45,6 @@ public class BookingController {
     @Autowired
     private EmailSender emailSender;
 
-//    @PostConstruct
-    public void init(){
-        LogUtils.init();
-        String requestId = String.valueOf(System.currentTimeMillis());
-        String orderId = String.valueOf(System.currentTimeMillis());
-        Long transId = 2L;
-        long amount = 5000;
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        System.out.println(System.currentTimeMillis());
-        String partnerClientId = "partnerClientId";
-        String orderInfo = "Pay With MoMo";
-        String returnURL = "momosdk:/";
-        String notifyURL = "momosdk:/";
-        String callbackToken = "callbackToken";
-        String token = "";
-
-        Environment environment = Environment.selectEnv("dev");
-
-
-//      Remember to change the IDs at enviroment.properties file
-
-        /***
-         * create payment with capture momo wallet
-         */
-        PaymentResponse captureWalletMoMoResponse = null;
-        try {
-            captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET, Boolean.TRUE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(captureWalletMoMoResponse.getPayUrl());
-    }
-
     @GetMapping("/export-bill")
     public ResponseEntity<byte[]> downloadPDF(@RequestParam("id") String id) throws Exception {
         Booking booking = this.bookingService.findById(id);
@@ -171,7 +138,7 @@ public class BookingController {
 
     @PostMapping("check-out/{id}")
     public ResponseEntity<ResponseDTO<String>> checkOut(@PathVariable("id") String id) throws Exception{
-        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkIn(id), "200", "success", true));
+        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkOut(id), "200", "success", true));
     }
 
     @PutMapping("update-service/{id}")

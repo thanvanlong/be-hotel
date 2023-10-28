@@ -137,7 +137,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Map<String, Object> pagingSort(int page, int limit) {
-        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, "");
+        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, "id");
         Page<Booking> bookingPage = bookingRepo.findAll(pagingSort);
 
         Metadata metadata = new Metadata();

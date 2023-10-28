@@ -190,4 +190,18 @@ public class RoomController {
         return ResponseEntity.ok(new ResponseDTO<>("Update Room Done!", "200", "Success", true));
     }
 
+    @DeleteMapping("")
+    public ResponseEntity<ResponseDTO<String>> delete(@RequestBody String[] ids) throws Exception{
+        for (String id : ids) {
+            Room room = this.roomService.findById(id);
+            if(room.isDelete()) throw new Exception("phong khong ton tai");
+        }
+
+        for (String id : ids) {
+            Room room = this.roomService.findById(id);
+            roomRepo.delete(room);
+        }
+        return ResponseEntity.ok(new ResponseDTO<>("done", "200", "Success", true));
+    }
+
 }
