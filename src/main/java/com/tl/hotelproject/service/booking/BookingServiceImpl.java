@@ -7,6 +7,7 @@ import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentFor;
 import com.tl.hotelproject.entity.bill.PaymentState;
 import com.tl.hotelproject.entity.booking.Booking;
+import com.tl.hotelproject.entity.booking.BookingState;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.entity.services.Services;
@@ -159,6 +160,14 @@ public class BookingServiceImpl implements BookingService{
         booking.setCheckedIn(true);
         bookingRepo.save(booking);
         return "checkin success";
+    }
+
+    @Override
+    public String checkOut(String id) throws Exception {
+        Booking booking = this.findById(id);
+        booking.setBookingState(BookingState.Done);
+        bookingRepo.save(booking);
+        return "checkout success";
     }
 
     @Override

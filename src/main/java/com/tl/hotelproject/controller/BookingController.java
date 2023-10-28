@@ -169,6 +169,11 @@ public class BookingController {
         return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkIn(id), "200", "success", true));
     }
 
+    @PostMapping("check-out/{id}")
+    public ResponseEntity<ResponseDTO<String>> checkOut(@PathVariable("id") String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkIn(id), "200", "success", true));
+    }
+
     @PutMapping("update-service/{id}")
     public ResponseEntity<ResponseDTO<String>> updateService(@PathVariable("id") String id, @Valid @RequestBody UpdateUsedServicesDto[] body) throws Exception{
         return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.updateUsedService(id, body), "200", "Success", true));

@@ -92,7 +92,7 @@ public class RoomController {
             return ResponseEntity.ok(new ResponseDTO<String>("Ten khach san da bi trung", "500", "Failed", false));
         }
 
-        String []typeImg = {"image/png", "image/jpeg"};
+        String []typeImg = {"image/png", "image/jpeg", "image/jpg"};
         for (MultipartFile file : files){
             if (!Arrays.asList(typeImg).contains(file.getContentType())) {
                 return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
@@ -163,7 +163,7 @@ public class RoomController {
                 imgUrls.addAll(room.getImages());
             }
 
-            String []typeImg = {"image/png", "image/jpeg"};
+            String []typeImg = {"image/png", "image/jpeg", "image/jpg"};
             for (MultipartFile file : files){
                 if (!Arrays.asList(typeImg).contains(file.getContentType())) {
                     return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
@@ -189,7 +189,5 @@ public class RoomController {
 
         return ResponseEntity.ok(new ResponseDTO<>("Update Room Done!", "200", "Success", true));
     }
-
-
 
 }
