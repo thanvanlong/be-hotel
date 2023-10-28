@@ -50,7 +50,7 @@ public class PromotionController {
                                                     @RequestParam(name = "description", required = false, defaultValue = "") String description,
                                                     @RequestParam(name = "startDate") LocalDate startDate,
                                                     @RequestParam("endDate") LocalDate endDate,
-                                                    @RequestParam(value = "state", required = false, defaultValue = "0") State state,
+                                                    @RequestParam(value = "state", required = false, defaultValue = "Inactive") State state,
                                                     @RequestParam(value = "discount") Integer discount,
                                                     @RequestParam(name = "file", required = false) MultipartFile file) throws Exception{
         Promotion promotion = new Promotion();
