@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
@@ -208,46 +209,62 @@ public class StatsController {
     }
 
     @GetMapping("stats-room")
-    public ResponseEntity<ResponseDTO<Map<String, String>>> statsRoom(){
-        Date currentDate = new Date();
+    public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRoom(){
+        LocalDate currentDate = LocalDate.now();
 
-        // Tạo một đối tượng Calendar và đặt nó thành ngày hiện tại
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
+        List<LocalDate> dateList = new ArrayList<>();
+        for (int i = 1; i<= 7; i++) {
+            dateList.add(currentDate.minusDays(i));
+        }
 
-        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        List<RoomStats> roomStats = new ArrayList<>();
+        for (LocalDate date : dateList) {
+            int day = date.getDayOfMonth();
+            int month = date.getMonthValue();
+            int year = date.getYear();
+            List<Object[]> dataForDate = this.bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
+            String t = day + "/" + month + "/" + year;
+            if(dataForDate.isEmpty()) {
+                RoomStats roomStats1 = new RoomStats();
+                roomStats1.setName(t);
+                roomStats1.setType("Doanh thu");
+                roomStats1.setValue(0);
 
-        Date sevenDaysAgo = calendar.getTime();
+                RoomStats roomStats2 = new RoomStats();
+                roomStats2.setName(t);
+                roomStats2.setType("Luot thue");
+                roomStats2.setValue(0);
 
-        System.out.println("Ngày hiện tại: " + currentDate);
-        System.out.println("Ngày 7 ngày trước: " + sevenDaysAgo);
+                roomStats.add(roomStats1);
+                roomStats.add(roomStats2);
+                continue;
+            }
+            Object[] temp = dataForDate.get(0);
+            String revenue = temp[2].toString();
+            String count = temp[3].toString();
 
-        return ResponseEntity.ok(new ResponseDTO<>(new HashMap<>(), "200", "Success", true));
+            RoomStats roomStats1 = new RoomStats();
+            roomStats1.setName(t);
+            roomStats1.setType("Doanh thu");
+            roomStats1.setValue(Long.parseLong(revenue));
+
+            RoomStats roomStats2 = new RoomStats();
+            roomStats2.setName(t);
+            roomStats2.setType("Luot thue");
+            roomStats2.setValue(Integer.parseInt(count));
+
+            roomStats.add(roomStats1);
+            roomStats.add(roomStats2);
+        }
+
+        return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
     }
 
 //    @PostConstruct
-    public void test(){
-        Date currentDate = new Date();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_YEAR, -7);
-        Date sevenDaysAgo = calendar.getTime();
-
-        List<Date> dateList = new ArrayList<>();
-        calendar.setTime(sevenDaysAgo);
-        for (int i = 0; i < 7; i++) {
-            dateList.add(calendar.getTime());
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        for (Date date : dateList) {
-            List<Object[]> dataForDate = this.bookingRepo.findDataForDate(date);
-            System.out.println(new Gson().toJson(dataForDate));
-        }
-
-
-    }
+//    public void test(){
+//
+//
+//    }
 
     @GetMapping("revenue")
     public ResponseEntity<ResponseDTO<Revenue[]>> statsRevenue(@RequestParam("year") int year){
