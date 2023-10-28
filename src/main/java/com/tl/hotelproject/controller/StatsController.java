@@ -225,7 +225,7 @@ public class StatsController {
         return ResponseEntity.ok(new ResponseDTO<>(new HashMap<>(), "200", "Success", true));
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void test(){
         Date currentDate = new Date();
 
