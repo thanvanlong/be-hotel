@@ -159,9 +159,9 @@ public class RoomController {
 
         if (files != null) {
 
-            if(room.getImages() != null) {
-                imgUrls.addAll(room.getImages());
-            }
+//            if(room.getImages() != null) {
+//                imgUrls.addAll(room.getImages());
+//            }
 
             String []typeImg = {"image/png", "image/jpeg", "image/jpg"};
             for (MultipartFile file : files){
