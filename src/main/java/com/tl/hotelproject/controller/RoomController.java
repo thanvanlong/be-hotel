@@ -116,8 +116,7 @@ public class RoomController {
                 imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(name)));
             }
 //            List<String> arrImg = Arrays.asList(imgUrls.toString());
-            if(!imgUrls.isEmpty()) room.setImages(imgUrls);
-            else System.out.println("khong co anh");
+            room.setImages(imgUrls);
 
         } catch (IOException e) {
             return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
@@ -130,13 +129,14 @@ public class RoomController {
     }
 
 
-    @PostMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> updateRoom(
                                                             @RequestParam(value = "id") String id,
                                                             @RequestParam(value = "name", required = false) String name,
-                                                            @RequestParam(value = "price", required = false) int price,
+                                                            @RequestParam(value = "price", required = false, defaultValue = "-1") int price,
                                                             @RequestParam(value = "description", required = false) String description,
                                                             @RequestParam(value = "featureRooms", required = false) List<String> featureRooms,
+                                                            @RequestParam(value = "images", required = false) List<String> images,
                                                             @RequestParam(value = "files", required = false)
                                                             @ApiParam(value = "Danh sách tệp ảnh", required = false, type = "string", format = "binary", allowMultiple = true)
                                                             MultipartFile[] files) throws Exception{
@@ -150,9 +150,13 @@ public class RoomController {
         if(name != null) room.setName(name);
         if(description != null) room.setDescription(description);
         if(featureRooms != null) room.setFeatureRooms(featureRooms);
-        if(!Double.isNaN(price)) room.setPrice(price);
+        if(price != -1) room.setPrice(price);
 
         List<String> imgUrls = new ArrayList<>();
+        if(images != null) {
+            imgUrls.addAll(images);
+        }
+
         if (files != null) {
 
             if(room.getImages() != null) {
@@ -171,14 +175,14 @@ public class RoomController {
                     if (!Arrays.asList(typeImg).contains(file.getContentType())) {
                         return ResponseEntity.ok(new ResponseDTO<String>("Thể loại của ảnh không hợp lệ", "404", "Failed", false));
                     }
-                    imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(room.getName())));
+                    imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(name)));
                 }
+//            List<String> arrImg = Arrays.asList(imgUrls.toString());
+                room.setImages(imgUrls);
 
             } catch (IOException e) {
                 return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
             }
-
-            room.setImages(imgUrls);
         }
 
         roomRepo.save(room);

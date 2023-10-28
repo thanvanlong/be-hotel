@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.room WHERE b.id = :bookingId")
@@ -21,4 +23,10 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
 
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.client LEFT JOIN FETCH b.bills b1 WHERE b1.id = :billId")
     Booking getBookingByBill(@Param("billId") String billId);
+
+    @Query("SELECT MONTH(b.createdAt), SUM(b.totalAmount) FROM Booking b " +
+            "WHERE (b.bookingState = 2) AND YEAR(b.createdAt) = :year " +
+            "GROUP BY MONTH(b.createdAt)")
+    List<Object[]> calculateRevenueByMonth(int year);
+
 }

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -52,12 +53,6 @@ public class BookingServiceImpl implements BookingService{
     public String save(AddBookingDto body, int discount) throws Exception {
         Room room = roomService.findById(body.getIdRoom());
 
-            // set BooedRoom
-//            BookedRoom bookedRoom = new BookedRoom();
-//            bookedRoom.setRoom(room);
-//            bookedRoom.setCheckin(body.getCheckin());
-//            bookedRoom.setCheckout(body.getCheckout());
-//            bookedRoomService.save(bookedRoom);
 
             // set new client
         Client client = new Client();
@@ -141,7 +136,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Map<String, Object> pagingSort(int page, int limit) {
-        Pageable pagingSort = PageRequest.of(page, limit);
+        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.ASC, "");
         Page<Booking> bookingPage = bookingRepo.findAll(pagingSort);
 
         Metadata metadata = new Metadata();
