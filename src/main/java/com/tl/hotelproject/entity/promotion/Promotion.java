@@ -1,7 +1,9 @@
 package com.tl.hotelproject.entity.promotion;
 
 import com.tl.hotelproject.entity.CommonObjectDTO;
+import com.tl.hotelproject.entity.State;
 import com.tl.hotelproject.utils.StringUtils;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -32,6 +34,7 @@ public class Promotion {
     private LocalDate startDate;
     private LocalDate endDate;
     private int discount;
+    private State state = State.Active;
 
     @CreationTimestamp
     private LocalDateTime createAt;

@@ -1,6 +1,7 @@
 package com.tl.hotelproject.controller;
 
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.State;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.repo.PromotionRepo;
 import com.tl.hotelproject.service.promotion.PromotionService;
@@ -47,9 +48,14 @@ public class PromotionController {
     @PostMapping(name = "/save", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> save(@RequestParam("name") String name,
                                                     @RequestParam(name = "description", required = false) String description,
+                                                    @RequestParam(name = "startDate") LocalDate startDate,
+                                                    @RequestParam("endDate") LocalDate endDate,
+                                                    @RequestParam(value = "state", required = false) State state,
                                                     @RequestParam(name = "file", required = false) MultipartFile file) throws Exception{
         Promotion promotion = new Promotion();
         promotion.setName(name);
+        promotion.setStartDate(startDate);
+        promotion.setEndDate(endDate);
         promotion.setDescription(description);
         promotion.setSlug();
         promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
@@ -61,6 +67,9 @@ public class PromotionController {
     public ResponseEntity<ResponseDTO<String>> update(@PathVariable("id") String id,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "state", required = false) State state,
             @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         Promotion promotion = promotionService.getById(id);
@@ -69,13 +78,11 @@ public class PromotionController {
             promotion.setSlug();
         }
         if(description != null) promotion.setDescription(description);
+        if(startDate != null) promotion.setStartDate(startDate);
+        if(endDate != null) promotion.setStartDate(endDate);
+        if(state != null) promotion.setState(state);
         if(file != null) promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.update(promotion), "200", "Success", true));
-    }
-
-    @GetMapping("/sss")
-    public void check() {
-        System.out.println("long tv sss");
     }
 }
