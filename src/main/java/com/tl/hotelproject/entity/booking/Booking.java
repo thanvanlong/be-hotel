@@ -14,6 +14,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
@@ -63,11 +64,15 @@ public class Booking extends CommonObjectDTO {
     private List<Bill> bills;
 
     public void setTotalAmount() {
+        // Tính số ngày giữa checkin và checkout
+        long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
+        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
         int totalAmount = 0;
         if(usedServices != null) totalAmount = usedServices.stream()
                 .map(x -> x.getPrice() * x.getQuantity())
                 .reduce(0, Integer::sum);
 
-        this.totalAmount = totalAmount + this.quantity * this.price;
+        this.totalAmount = totalAmount + this.quantity * this.price * (int)diffInDays;
     }
 }
