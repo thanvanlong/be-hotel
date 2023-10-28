@@ -178,12 +178,13 @@ public class RoomController {
                     imgUrls.add(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(name)));
                 }
 //            List<String> arrImg = Arrays.asList(imgUrls.toString());
-                room.setImages(imgUrls);
+                
 
             } catch (IOException e) {
                 return ResponseEntity.ok(new ResponseDTO<String>("Upload ảnh lên không thành công", "404", "Failed", false));
             }
         }
+        room.setImages(imgUrls);
 
         roomRepo.save(room);
 

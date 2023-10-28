@@ -58,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public  Map<String, Object> pagingSort(int page, int limit) {
-        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, "createdAt");
+        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, "updatedAt");
         Page<Room> roomPage = roomRepo.findAll(pagingSort);
 
         Metadata metadata = new Metadata();
