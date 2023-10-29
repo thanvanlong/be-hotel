@@ -16,4 +16,6 @@ public interface ServicesService {
     String save(Services services) throws Exception;
 
     String update(Services services) throws Exception;
+
+    Services getByName(String name) throws Exception;
 }

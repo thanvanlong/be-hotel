@@ -8,13 +8,18 @@ import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.repo.RoomRepo;
 import com.tl.hotelproject.repo.ServicesRepo;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -38,11 +43,29 @@ class RoomStats {
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+class RoomStatsExcel extends RoomStats{
+    private String description;
+    private Date createdAt;
+}
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 class RevenueByService {
     private String name;
     private long value;
 }
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class RevenueByServiceExcel {
+    private String name;
+    private String description;
+    private String unity;
+    private Date createdAt;
+    private long value;
+}
 
 @RestController
 @RequestMapping("api/v1/stats")
@@ -59,6 +82,157 @@ public class StatsController {
 
     @Autowired
     private ServicesRepo servicesRepo;
+
+    @GetMapping("/export-excel-revenue")
+    public void exportExcel(@RequestParam("year") int year, HttpServletResponse response) throws IOException {
+        Revenue[] revenues = this.revenueMonth(year);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Revenue " + year);
+
+        // Tạo dữ liệu
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Month");
+        headerRow.createCell(1).setCellValue("Revenue");
+
+        // Tạo một CellStyle cho header với màu nền
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Set font chu
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
+        headerStyle.setFont(headerFont);
+
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            headerRow.getCell(i).setCellStyle(headerStyle);
+            sheet.autoSizeColumn(i);
+        }
+
+        int sum = 0;
+
+        // Thêm dữ liệu
+        for(int i = 1; i <= revenues.length ; i++) {
+            Row dataRow = sheet.createRow(i);
+            dataRow.createCell(0).setCellValue(revenues[i-1].getType());
+            dataRow.createCell(1).setCellValue(revenues[i-1].getValue());
+            sum += revenues[i-1].getValue();
+        }
+
+        Row dataRow = sheet.createRow(revenues.length + 1);
+        dataRow.createCell(0).setCellValue("Total");
+        dataRow.createCell(1).setCellValue(sum);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename="+"revenue-"+year+ ".xlsx");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    @GetMapping("/export-excel-service")
+    public void exportExcelService(@RequestParam("year") int year,
+                                   @RequestParam(value = "month", defaultValue = "0") int month,
+                                   @RequestParam(value = "day", defaultValue = "0") int day,
+                                   HttpServletResponse response) throws Exception {
+
+        List<RevenueByServiceExcel> revenueByServiceExcels = this.statsService(year, month, day);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Revenue Service");
+
+        // Tạo dữ liệu
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Name");
+        headerRow.createCell(1).setCellValue("Description");
+        headerRow.createCell(2).setCellValue("Created At");
+        headerRow.createCell(3).setCellValue("Revenue");
+
+
+        // Tạo một CellStyle cho header với màu nền
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Set font chu
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
+        headerStyle.setFont(headerFont);
+
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            headerRow.getCell(i).setCellStyle(headerStyle);
+            sheet.autoSizeColumn(i);
+        }
+
+        // Thêm dữ liệu
+        for(int i = 1; i <= revenueByServiceExcels.size() ; i++) {
+            Row dataRow = sheet.createRow(i);
+            dataRow.createCell(0).setCellValue(revenueByServiceExcels.get(i-1).getName());
+            dataRow.createCell(1).setCellValue(revenueByServiceExcels.get(i-1).getDescription());
+            dataRow.createCell(2).setCellValue(revenueByServiceExcels.get(i-1).getCreatedAt());
+            dataRow.createCell(3).setCellValue(revenueByServiceExcels.get(i-1).getValue());
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=revenue-service.xlsx");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    @GetMapping("/export-excel-room")
+    public void exportExcelRoom(@RequestParam("year") int year,
+                                   @RequestParam(value = "month", defaultValue = "0") int month,
+                                   @RequestParam(value = "day", defaultValue = "0") int day,
+                                   HttpServletResponse response) throws Exception {
+
+        List<RoomStatsExcel> revenueByRoomExcels = this.statsRoom(year, month, day);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Revenue Service");
+
+        // Tạo dữ liệu
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Name");
+        headerRow.createCell(1).setCellValue("Description");
+        headerRow.createCell(2).setCellValue("Created At");
+        headerRow.createCell(3).setCellValue("Revenue");
+
+
+        // Tạo một CellStyle cho header với màu nền
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Set font chu
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
+        headerStyle.setFont(headerFont);
+
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            headerRow.getCell(i).setCellStyle(headerStyle);
+            sheet.autoSizeColumn(i);
+        }
+
+        // Thêm dữ liệu
+        for(int i = 1; i <= revenueByRoomExcels.size() ; i++) {
+            Row dataRow = sheet.createRow(i);
+            dataRow.createCell(0).setCellValue(revenueByRoomExcels.get(i-1).getName());
+            dataRow.createCell(1).setCellValue(revenueByRoomExcels.get(i-1).getDescription());
+            dataRow.createCell(2).setCellValue(revenueByRoomExcels.get(i-1).getCreatedAt());
+            dataRow.createCell(3).setCellValue(revenueByRoomExcels.get(i-1).getValue());
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=revenue-room.xlsx");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
 
     @GetMapping("stats-rooms")
     public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRooms(
@@ -185,25 +359,7 @@ public class StatsController {
 
     @GetMapping("revenue")
     public ResponseEntity<ResponseDTO<Revenue[]>> statsRevenue(@RequestParam("year") int year){
-        List<Object[]> result = bookingRepo.calculateRevenueByMonth(year);
-
-        Revenue[] revenues = new Revenue[12];
-
-        for(int i = 1; i <= 12; i++){
-            Revenue revenue = new Revenue();
-            revenue.setType("Tháng "+ i);
-            revenues[i-1] = revenue;
-        }
-
-        for (Object[] row : result) {
-            String month = row[0].toString();
-            String revenue = row[1].toString();
-
-            int temp = Integer.parseInt(month);
-            revenues[temp-1].setValue(Integer.parseInt(revenue));
-        }
-
-        return ResponseEntity.ok(new ResponseDTO<>(revenues, "200", "Success", true));
+        return ResponseEntity.ok(new ResponseDTO<>(this.revenueMonth(year), "200", "Success", true));
     }
 
     @GetMapping("stats-service")
@@ -259,9 +415,121 @@ public class StatsController {
 
     }
 
-//    @PostConstruct
-//    public void test() {
-//        List<Object[]> list = this.bookingRepo.calculateRevenueByService(2023);
-//        System.out.println(new Gson().toJson(list));
-//    }
+    private Revenue[] revenueMonth(int year){
+        List<Object[]> result = bookingRepo.calculateRevenueByMonth(year);
+
+        Revenue[] revenues = new Revenue[12];
+
+        for(int i = 1; i <= 12; i++){
+            Revenue revenue = new Revenue();
+            revenue.setType("Tháng "+ i);
+            revenues[i-1] = revenue;
+        }
+
+        for (Object[] row : result) {
+            String month = row[0].toString();
+            String revenue = row[1].toString();
+
+            int temp = Integer.parseInt(month);
+            revenues[temp-1].setValue(Integer.parseInt(revenue));
+        }
+
+        return revenues;
+    }
+
+    private List<RevenueByServiceExcel> statsService(int year, int month, int day) throws Exception{
+        List<Object[]> result;
+
+        if(day != 0) {
+            if(month == 0) throw new Exception("Du lieu dinh dang ko dung");
+
+            result = bookingRepo.calculateRevenueByService(year, month, day);
+
+        }
+        else if(month != 0){
+            result = bookingRepo.calculateRevenueByService(year, month);
+        }
+        else result = bookingRepo.calculateRevenueByService(year);
+
+
+        List<Object[]> serviceList = servicesRepo.listServiceSelect();
+
+        System.out.println(new Gson().toJson(serviceList));
+        List<RevenueByServiceExcel> revenueList = new ArrayList<>();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Object[] service : serviceList) {
+            boolean check = false;
+            RevenueByServiceExcel revenueByService = new RevenueByServiceExcel();
+            for(Object[] object: result) {
+                String id = object[0].toString();
+                if(service[1].toString().equals(id)){
+                    check = true;
+                    String name = object[1].toString();
+                    String revenue = object[2].toString();
+
+                    revenueByService.setName(name);
+                    revenueByService.setValue(Long.parseLong(revenue));
+                    break;
+                }
+            }
+            if(!check) {
+                revenueByService.setName(service[0].toString());
+                revenueByService.setValue(0);
+
+            }
+
+            revenueByService.setCreatedAt(dateFormat.parse(service[3].toString()));
+            revenueByService.setDescription(service[4].toString());
+            revenueByService.setUnity(service[2].toString());
+            revenueList.add(revenueByService);
+        }
+        return revenueList;
+    }
+
+    private List<RoomStatsExcel> statsRoom(int year, int month, int day) throws Exception{
+        List<Object[]> result;
+        if(day != 0) {
+            if(month == 0) throw new Exception("du lieu khong dung");
+            result = bookingRepo.calculateRevenueByService(year, month, day);
+        }
+
+        else if(month != 0) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
+        else result = bookingRepo.calculateRevenueByService(year);
+
+        List<Object[]> roomList = roomRepo.listRoomSelect();
+
+        List<RoomStatsExcel> roomStats = new ArrayList<>();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Object[] room : roomList) {
+            boolean check = false;
+            RoomStatsExcel roomStats1 = new RoomStatsExcel();
+
+            for(Object[] object: result) {
+                String id = object[0].toString();
+                if(room[1].toString().equals(id)){
+                    check = true;
+                    String name = object[1].toString();
+                    String revenue = object[2].toString();
+
+                    roomStats1.setName(name);
+                    roomStats1.setValue(Long.parseLong(revenue));
+
+                    break;
+                }
+            }
+            if(!check) {
+                roomStats1.setName(room[0].toString());
+                roomStats1.setValue(0);
+
+            }
+            roomStats1.setCreatedAt(dateFormat.parse(room[3].toString()));
+            roomStats1.setDescription(room[2].toString());
+            roomStats.add(roomStats1);
+        }
+        return roomStats;
+    }
 }
