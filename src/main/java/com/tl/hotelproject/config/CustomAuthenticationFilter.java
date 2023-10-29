@@ -64,16 +64,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         user.setAccessToken(access_token);
         ResponseDTO<User> data = new ResponseDTO<>(user, "200", "", true);
-        Map<String, ResponseDTO<User>> tokens = new HashMap<>();
+//        Map<String, ResponseDTO<User>> tokens = new HashMap<>();
         Cookie cookie = new Cookie("refresh_token", refresh_token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setSecure(true);
         cookie.setMaxAge( 1 * 24 * 60 * 60 *1000);
         response.addCookie(cookie);
-        tokens.put("data", data);
+//        tokens.put("data", data);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), data);
     }
 
     @Override

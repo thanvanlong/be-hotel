@@ -20,10 +20,14 @@ public class Services extends CommonObjectDTO {
     @UuidGenerator
     private String id;
 
+    @Column(unique = true)
     private String name;
     private String unity;
     private int price;
     private String description;
+
+    @Column(nullable = true)
+    private boolean isDelete = false;
 
     @OneToMany(mappedBy = "services")
     @JsonIgnore

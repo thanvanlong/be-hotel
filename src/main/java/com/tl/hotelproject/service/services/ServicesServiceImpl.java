@@ -56,12 +56,18 @@ public class ServicesServiceImpl implements ServicesService{
 
     @Override
     public String save(Services services) throws Exception {
+        Optional<Services> services1 = this.servicesRepo.findByName(services.getName());
+        if(services1.isPresent()) throw new Exception("da ton tai");
+
         this.servicesRepo.save(services);
         return "Da them thanh cong";
     }
 
     @Override
     public String update(Services services) throws Exception {
-        return null;
+        Optional<Services> services1 = this.servicesRepo.findByName(services.getName());
+        if(services1.isPresent()) throw new Exception("da ton tai");
+        this.servicesRepo.save(services);
+        return "Da sua thanh cong";
     }
 }

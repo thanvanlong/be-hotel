@@ -6,6 +6,7 @@ import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.repo.BillRepo;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.repo.RoomRepo;
+import com.tl.hotelproject.repo.ServicesRepo;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +35,15 @@ class RoomStats {
     private long value;
 }
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class RevenueByService {
+    private String name;
+    private long value;
+}
+
+
 @RestController
 @RequestMapping("api/v1/stats")
 @CrossOrigin("*")
@@ -47,117 +57,24 @@ public class StatsController {
     @Autowired
     private RoomRepo roomRepo;
 
+    @Autowired
+    private ServicesRepo servicesRepo;
+
     @GetMapping("stats-rooms")
     public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRooms(
             @RequestParam("year") int year,
             @RequestParam(value = "month", required = false) Integer month,
             @RequestParam(value = "day", required = false) Integer day
     ) throws Exception{
-
+        List<Object[]> result;
         if(day != null) {
             if(month == null) throw new Exception("du lieu khong dung");
-            List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
-            List<Object[]> roomList = roomRepo.listRoomSelect();
-
-            List<RoomStats> roomStats = new ArrayList<>();
-
-            for (Object[] room : roomList) {
-                boolean check = false;
-                for(Object[] object: result) {
-                    String id = object[0].toString();
-                    if(room[1].toString().equals(id)){
-                        check = true;
-                        String name = object[1].toString();
-                        String revenue = object[2].toString();
-                        String count = object[3].toString();
-
-                        RoomStats roomStats1 = new RoomStats();
-                        roomStats1.setName(name);
-                        roomStats1.setType("Doanh thu");
-                        roomStats1.setValue(Long.parseLong(revenue));
-
-                        RoomStats roomStats2 = new RoomStats();
-                        roomStats2.setName(name);
-                        roomStats2.setType("Luot thue");
-                        roomStats2.setValue(Integer.parseInt(count));
-
-                        roomStats.add(roomStats1);
-                        roomStats.add(roomStats2);
-
-                        break;
-                    }
-                }
-                if(!check) {
-                    RoomStats roomStats1 = new RoomStats();
-                    roomStats1.setName(room[0].toString());
-                    roomStats1.setType("Doanh thu");
-                    roomStats1.setValue(0);
-
-                    RoomStats roomStats2 = new RoomStats();
-                    roomStats2.setName(room[0].toString());
-                    roomStats2.setType("Luot thue");
-                    roomStats2.setValue(0);
-
-                    roomStats.add(roomStats1);
-                    roomStats.add(roomStats2);
-                }
-            }
-            return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
+            result = bookingRepo.calculateRevenueByService(year, month, day);
         }
 
-        if(month != null) {
+        else if(month != null) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
+        else result = bookingRepo.calculateRevenueByService(year);
 
-            List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
-            List<Object[]> roomList = roomRepo.listRoomSelect();
-
-            List<RoomStats> roomStats = new ArrayList<>();
-
-            for (Object[] room : roomList) {
-                boolean check = false;
-                for(Object[] object: result) {
-                    String id = object[0].toString();
-                    if(room[1].toString().equals(id)){
-                        check = true;
-                        String name = object[1].toString();
-                        String revenue = object[2].toString();
-                        String count = object[3].toString();
-
-                        RoomStats roomStats1 = new RoomStats();
-                        roomStats1.setName(name);
-                        roomStats1.setType("Doanh thu");
-                        roomStats1.setValue(Long.parseLong(revenue));
-
-                        RoomStats roomStats2 = new RoomStats();
-                        roomStats2.setName(name);
-                        roomStats2.setType("Luot thue");
-                        roomStats2.setValue(Integer.parseInt(count));
-
-                        roomStats.add(roomStats1);
-                        roomStats.add(roomStats2);
-
-                        break;
-                    }
-                }
-                if(!check) {
-                    RoomStats roomStats1 = new RoomStats();
-                    roomStats1.setName(room[0].toString());
-                    roomStats1.setType("Doanh thu");
-                    roomStats1.setValue(0);
-
-                    RoomStats roomStats2 = new RoomStats();
-                    roomStats2.setName(room[0].toString());
-                    roomStats2.setType("Luot thue");
-                    roomStats2.setValue(0);
-
-                    roomStats.add(roomStats1);
-                    roomStats.add(roomStats2);
-                }
-            }
-
-            return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
-        }
-
-        List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(year);
         List<Object[]> roomList = roomRepo.listRoomSelect();
 
         List<RoomStats> roomStats = new ArrayList<>();
@@ -288,4 +205,63 @@ public class StatsController {
 
         return ResponseEntity.ok(new ResponseDTO<>(revenues, "200", "Success", true));
     }
+
+    @GetMapping("stats-service")
+    public ResponseEntity<ResponseDTO<List<RevenueByService>>> revenueByService(
+            @RequestParam("year") int year,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "day", required = false) Integer day
+    ) throws Exception{
+        List<Object[]> result;
+
+        if(day != null) {
+            if(month == null) throw new Exception("Du lieu dinh dang ko dung");
+
+            result = bookingRepo.calculateRevenueByService(year, month, day);
+
+        }
+        else if(month != null){
+            result = bookingRepo.calculateRevenueByService(year, month);
+        }
+        else result = bookingRepo.calculateRevenueByService(year);
+
+
+        List<Object[]> serviceList = servicesRepo.listServiceSelect();
+
+        List<RevenueByService> revenueList = new ArrayList<>();
+
+        for (Object[] service : serviceList) {
+            boolean check = false;
+            for(Object[] object: result) {
+                String id = object[0].toString();
+                if(service[1].toString().equals(id)){
+                    check = true;
+                    String name = object[1].toString();
+                    String revenue = object[2].toString();
+
+                    RevenueByService revenueByService = new RevenueByService();
+                    revenueByService.setName(name);
+                    revenueByService.setValue(Long.parseLong(revenue));
+
+                    revenueList.add(revenueByService);
+
+                    break;
+                }
+            }
+            if(!check) {
+                RevenueByService revenueByService = new RevenueByService();
+                revenueByService.setName(service[0].toString());
+                revenueByService.setValue(0);
+                revenueList.add(revenueByService);
+            }
+        }
+        return ResponseEntity.ok(new ResponseDTO<>(revenueList, "200", "Success", true));
+
+    }
+
+//    @PostConstruct
+//    public void test() {
+//        List<Object[]> list = this.bookingRepo.calculateRevenueByService(2023);
+//        System.out.println(new Gson().toJson(list));
+//    }
 }

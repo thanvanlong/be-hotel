@@ -1,7 +1,9 @@
 package com.tl.hotelproject.controller;
 
 import com.tl.hotelproject.entity.ResponseDTO;
+import com.tl.hotelproject.entity.room.Room;
 import com.tl.hotelproject.entity.services.Services;
+import com.tl.hotelproject.repo.ServicesRepo;
 import com.tl.hotelproject.service.services.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ import java.util.Map;
 public class ServicesController {
     @Autowired
     private ServicesService servicesService;
+
+    @Autowired
+    private ServicesRepo servicesRepo;
 
     @GetMapping("list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listServices(@RequestParam(defaultValue = "0") int page,
@@ -37,5 +42,27 @@ public class ServicesController {
     public ResponseEntity<ResponseDTO<String>> save(@RequestBody Services services) throws Exception {
         return ResponseEntity.ok(new ResponseDTO<>(this.servicesService.save(services), "200", "Success", true)) ;
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<ResponseDTO<String>> update(@PathVariable("id") String id,
+                                                      @RequestBody Services services) throws Exception {
+        services.setId(id);
+        return ResponseEntity.ok(new ResponseDTO<>(this.servicesService.update(services), "200", "Success", true)) ;
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<ResponseDTO<String>> delete(@RequestBody String[] ids) throws Exception{
+        for (String id : ids) {
+            Services services = this.servicesService.findById(id);
+            if(services.isDelete()) throw new Exception("dich vu khong ton tai");
+        }
+
+        for (String id : ids) {
+            Services services = this.servicesService.findById(id);
+            servicesRepo.delete(services);
+        }
+        return ResponseEntity.ok(new ResponseDTO<>("done", "200", "Success", true));
+    }
+
 
 }

@@ -1,7 +1,6 @@
 package com.tl.hotelproject.repo;
 
 import com.tl.hotelproject.entity.booking.Booking;
-import com.tl.hotelproject.entity.room.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,4 +56,26 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
             "GROUP BY b.room.id, b.room.name")
     List<Object[]> findDataForDate(@Param("date") Date date);
 
+    @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
+            "FROM Booking b " +
+            "INNER JOIN b.usedServices u " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "GROUP BY u.services.id, u.services.name")
+    List<Object[]> calculateRevenueByService(int year);
+
+    @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
+            "FROM Booking b " +
+            "INNER JOIN b.usedServices u " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "and MONTH(b.createdAt) = :month " +
+            "GROUP BY u.services.id, u.services.name")
+    List<Object[]> calculateRevenueByService(int year, int month);
+
+    @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
+            "FROM Booking b " +
+            "INNER JOIN b.usedServices u " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
+            "GROUP BY u.services.id, u.services.name")
+    List<Object[]> calculateRevenueByService(int year, int month, int day);
 }
