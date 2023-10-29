@@ -47,7 +47,7 @@ public class PromotionController {
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.getBySlug(slug), "200", "Success", true));
     }
 
-    @PostMapping(name = "/save", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/save", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO<String>> save(@RequestParam("name") String name,
                                                     @RequestParam(name = "description", required = false, defaultValue = "") String description,
                                                     @RequestParam(name = "startDate") LocalDate startDate,
@@ -68,8 +68,8 @@ public class PromotionController {
         return ResponseEntity.ok(new ResponseDTO<>(promotionService.save(promotion), "200", "Success", true));
     }
 
-    @PutMapping(name = "/update/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO<String>> update(@PathVariable("id") String id,
+    @PutMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDTO<String>> update(@RequestParam("id") String id,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "startDate", required = false) LocalDate startDate,
