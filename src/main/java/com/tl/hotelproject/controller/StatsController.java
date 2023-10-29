@@ -241,13 +241,14 @@ public class StatsController {
             @RequestParam(value = "day", required = false) Integer day
     ) throws Exception{
         List<Object[]> result;
+
         if(day != null) {
             if(month == null) throw new Exception("du lieu khong dung");
-            result = bookingRepo.calculateRevenueByService(year, month, day);
+            result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
         }
 
         else if(month != null) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
-        else result = bookingRepo.calculateRevenueByService(year);
+        else result = bookingRepo.calculateRoomRevenueAndBookings(year);
 
         List<Object[]> roomList = roomRepo.listRoomSelect();
 
@@ -492,11 +493,11 @@ public class StatsController {
         List<Object[]> result;
         if(day != 0) {
             if(month == 0) throw new Exception("du lieu khong dung");
-            result = bookingRepo.calculateRevenueByService(year, month, day);
+            result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
         }
 
         else if(month != 0) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
-        else result = bookingRepo.calculateRevenueByService(year);
+        else result = bookingRepo.calculateRoomRevenueAndBookings(year);
 
         List<Object[]> roomList = roomRepo.listRoomSelect();
 
