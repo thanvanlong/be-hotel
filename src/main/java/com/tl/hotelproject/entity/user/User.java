@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tl.hotelproject.entity.CommonObjectDTO;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.booking.Booking;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -48,6 +45,9 @@ public class User extends CommonObjectDTO implements UserDetails {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Bill> bills;
+
+    @Transient
+    private String accessToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
