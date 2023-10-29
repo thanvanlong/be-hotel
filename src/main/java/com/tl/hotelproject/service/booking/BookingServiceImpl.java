@@ -73,6 +73,7 @@ public class BookingServiceImpl implements BookingService{
         booking.setRoom(room);
         booking.setCheckin(body.getCheckin());
         booking.setCheckout(body.getCheckout());
+        booking.setBookingState(BookingState.AdminInit);
         booking.setPrice((int) (room.getPrice() * ((float) (100 - discount)/100)));
         if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
         booking.setQuantity(body.getQuantity());
@@ -93,7 +94,7 @@ public class BookingServiceImpl implements BookingService{
         String url = this.billService.initBill(booking, body.getPaymentType());
 
 
-        return url;
+        return "Da dat thanh cong";
     }
 
     @Override
@@ -166,6 +167,22 @@ public class BookingServiceImpl implements BookingService{
     public String checkOut(String id) throws Exception {
         Booking booking = this.findById(id);
         booking.setBookingState(BookingState.Done);
+
+        if(!booking.isCheckedIn()) throw new Exception("Phong chua checkIn");
+
+        if(booking.getBills().get(0).getPaymentState() == PaymentState.Pending) {
+            this.billService.setBillDone(booking.getBills().get(0).getId());
+        }
+        if(booking.getUsedServices() != null){
+            Bill bill = new Bill();
+            bill.setTotalAmount(booking.getUsedServices().stream()
+                    .map(x -> x.getPrice() * x.getQuantity())
+                    .reduce(0, Integer::sum));
+            bill.setBooking(booking);
+//            bill.setUser(user);
+            this.billService.setBillServices(bill);
+        }
+
         bookingRepo.save(booking);
         return "checkout success";
     }

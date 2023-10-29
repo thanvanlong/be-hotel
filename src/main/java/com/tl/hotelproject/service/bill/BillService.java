@@ -13,4 +13,9 @@ public interface BillService {
     String initBill(Booking booking, PaymentType type) throws Exception;
     String fulfilledBill(String orderId) throws Exception;
     String rejectBill(String id, String code) throws Exception;
+
+    String setBillServices(Bill bill) throws Exception;
+
+    String setBillDone(String id) throws Exception;
+
 }

@@ -7,15 +7,14 @@ import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.LogUtils;
 import com.tl.hotelproject.dtos.bills.VnpayCreatePaymentDto;
 import com.tl.hotelproject.entity.bill.Bill;
+import com.tl.hotelproject.entity.bill.PaymentFor;
 import com.tl.hotelproject.entity.bill.PaymentState;
 import com.tl.hotelproject.entity.bill.PaymentType;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.booking.BookingState;
-import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.repo.BillRepo;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.mail.EmailSender;
-import com.tl.hotelproject.utils.StringUtils;
 import com.tl.hotelproject.utils.VnpayUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,6 @@ public class BillServiceImpl implements BillService{
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            System.out.println(captureWalletMoMoResponse);
             url = captureWalletMoMoResponse.getPayUrl();
         } else if (type == PaymentType.Zalopay) {
             bill.setPaymentType(PaymentType.Zalopay);
@@ -110,7 +108,7 @@ public class BillServiceImpl implements BillService{
             createPaymentDto.setOrderInfo("Thanh toán VNPAY");
             createPaymentDto.setOrderId(bill.getOrderId());
             url = vnpayUtils.createPayment(createPaymentDto);
-        }
+        } else bill.setPaymentType(PaymentType.Cash);
         billRepo.save(bill);
         Map<String, Object> body = new HashMap<>();
         body.put("roomName", booking.getRoom().getName());
@@ -123,9 +121,12 @@ public class BillServiceImpl implements BillService{
         body.put("services", new ArrayList<>());
         body.put("totalAmount", bill.getTotalAmount());
 
-        emailSender.send(booking.getClient().getEmail(), "", "Ban co don hanh can thanh toan", body, "invoice.html");
 
-        return url;
+        if(bill.getPaymentType() != PaymentType.Cash) {
+            emailSender.send(booking.getClient().getEmail(), "", "Ban co don hanh can thanh toan", body, "invoice.html");
+            return url;
+        }
+        return "done";
     }
 
     @Override
@@ -162,5 +163,21 @@ public class BillServiceImpl implements BillService{
 
         emailSender.send(booking.getClient().getEmail(), responseCode.get(code), "Thanh toan that bai", new HashMap<>() , "invoice.html");
         return "reject";
+    }
+
+    @Override
+    public String setBillServices(Bill bill) throws Exception {
+        bill.setPaymentFor(PaymentFor.Services);
+        bill.setPaymentState(PaymentState.Fulfilled);
+        billRepo.save(bill);
+        return "done";
+    }
+
+    @Override
+    public String setBillDone(String id) throws Exception {
+        Bill bill = getBillById(id);
+        bill.setPaymentState(PaymentState.Fulfilled);
+        billRepo.save(bill);
+        return "done";
     }
 }

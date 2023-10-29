@@ -36,7 +36,7 @@ public class Booking extends CommonObjectDTO {
 
     @Column(nullable = true)
     private int quantity;
-    private boolean isCheckedIn;
+    private boolean isCheckedIn = false;
 
     @Column(nullable = true)
     private int totalAmount;
