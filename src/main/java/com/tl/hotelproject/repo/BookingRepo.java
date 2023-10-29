@@ -24,6 +24,14 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.client LEFT JOIN FETCH b.bills b1 WHERE b1.id = :billId")
     Booking getBookingByBill(@Param("billId") String billId);
 
+    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
+            "FROM Booking b " +
+            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
+            "and b.id = :id "+
+            "GROUP BY b.room.id, b.room.name")
+    Object[] calculate7day(int year, int month, int day, String id);
+
     @Query("SELECT MONTH(b.createdAt), SUM(b.totalAmount) FROM Booking b " +
             "WHERE (b.bookingState = 2) AND YEAR(b.createdAt) = :year " +
             "GROUP BY MONTH(b.createdAt)")

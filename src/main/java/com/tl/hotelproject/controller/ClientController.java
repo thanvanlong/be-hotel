@@ -3,6 +3,7 @@ package com.tl.hotelproject.controller;
 import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.client.Client;
+import com.tl.hotelproject.repo.ClientRepo;
 import com.tl.hotelproject.service.client.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ import java.util.Map;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private ClientRepo clientRepo;
 
     @GetMapping("list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listClient(@RequestParam(defaultValue = "0") int page,
@@ -45,11 +49,11 @@ public class ClientController {
         return ResponseEntity.ok(new ResponseDTO<>(clientList, "200", "Success", true));
     }
 
-//    @GetMapping("detail/{id}")
-//    public ResponseEntity<ResponseDTO<Client>> getDetail(@PathVariable("id") String id){
-//        Client client = new Client();
-//        return ResponseEntity.ok(new ResponseDTO<>(client, "200", "Success", true));
-//
-//
-//    }
+    @PutMapping("{id}")
+    public ResponseEntity<ResponseDTO<String>> update(@PathVariable("id") String id, @RequestBody Client client){
+        client.setId(id);
+        clientRepo.save(client);
+
+        return ResponseEntity.ok(new ResponseDTO<>("update thanh cong", "200", "Success", true));
+    }
 }

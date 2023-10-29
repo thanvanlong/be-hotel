@@ -300,8 +300,8 @@ public class StatsController {
         return ResponseEntity.ok(new ResponseDTO<>(roomStats, "200", "Success", true));
     }
 
-    @GetMapping("stats-room")
-    public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRoom(){
+    @GetMapping("stats-room/{id}")
+    public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRoom(@PathVariable("id") String id){
         LocalDate currentDate = LocalDate.now();
 
         List<LocalDate> dateList = new ArrayList<>();
@@ -310,13 +310,15 @@ public class StatsController {
         }
 
         List<RoomStats> roomStats = new ArrayList<>();
-        for (LocalDate date : dateList) {
+        for (LocalDate date: dateList) {
             int day = date.getDayOfMonth();
             int month = date.getMonthValue();
             int year = date.getYear();
-            List<Object[]> dataForDate = this.bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
+            Object[] dataForDate = this.bookingRepo.calculate7day(year, month, day, id);
             String t = day + "/" + month + "/" + year;
-            if(dataForDate.isEmpty()) {
+
+
+            if(dataForDate.length == 0) {
                 RoomStats roomStats1 = new RoomStats();
                 roomStats1.setName(t);
                 roomStats1.setType("Doanh thu");
@@ -331,9 +333,8 @@ public class StatsController {
                 roomStats.add(roomStats2);
                 continue;
             }
-            Object[] temp = dataForDate.get(0);
-            String revenue = temp[2].toString();
-            String count = temp[3].toString();
+            String revenue = dataForDate[2].toString();
+            String count = dataForDate[3].toString();
 
             RoomStats roomStats1 = new RoomStats();
             roomStats1.setName(t);
