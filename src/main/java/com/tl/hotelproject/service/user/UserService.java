@@ -10,4 +10,6 @@ public interface UserService extends UserDetailsService {
     void update(User user);
     void delete(User user);
     void find(String id);
+
+    long count();
 }

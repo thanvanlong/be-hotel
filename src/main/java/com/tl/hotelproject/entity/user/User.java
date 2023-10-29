@@ -56,6 +56,12 @@ public class User extends CommonObjectDTO implements UserDetails {
         return roleList;
     }
 
+    public void setRoles(Role role){
+        Collection<Role> roles1 = new ArrayList<>();
+        roles1.add(role);
+        this.roles = roles1;
+    }
+
     public User(String email) {
         this.email = email;
     }

@@ -4,12 +4,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service
-@Configuration
+//@Service
+//@Configuration
 public class PassEncoder implements PasswordEncoder {
     @Override
     public String encode(CharSequence charSequence) {
-        System.out.println("sssdsdd" + charSequence);
         return charSequence.toString();
     }
 

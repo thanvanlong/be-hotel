@@ -37,6 +37,9 @@ public class RoomController {
     @Autowired
     private FeatureRoomService featureRoomService;
 
+    @Autowired
+    private FeatureRoomRepo featureRoomRepo;
+
     @GetMapping("/list-feature-room")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listFR(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "100") int limit,
@@ -203,6 +206,42 @@ public class RoomController {
             roomRepo.delete(room);
         }
         return ResponseEntity.ok(new ResponseDTO<>("done", "200", "Success", true));
+    }
+
+    @PostConstruct
+    public void test () {
+
+        long count = this.featureRoomService.count();
+        if(count > 0) return;
+        List<String> list = new ArrayList<>();
+        list.add("Điều hòa 2 chiều");
+        list.add("Nước lọc miễn phí");
+        list.add("Điện thoại quốc tế");
+        list.add("Đồ dùng trong phòng tắm");
+        list.add("Minibar");
+        list.add("Máy sấy tóc, áo choàng tắm, dép đi trong phòng");
+        list.add("Két an toàn");
+        list.add("Điện áp 220 vôn");
+        list.add("Tivi màn hình phẳng 43 inch");
+        list.add("Gương trang điểm");
+        list.add("Bàn làm việc");
+        list.add("Internet cáp quang không dây");
+        list.add("Truyền hình cáp");
+        list.add("Tủ quần áo");
+        list.add("Ấm điện đun nước");
+        list.add("Phòng tắm với vòi sen và bồn tắm");
+        list.add("Internet cáp quang không dây");
+        list.add("Ghế sofa");
+        list.add("Không gian ngồi nghỉ");
+        list.add("Hoa quả chào mừng");
+        list.add("Phòng ăn riêng");
+
+        for(String f: list) {
+            FeatureRoom featureRoom = new FeatureRoom();
+            featureRoom.setName(f);
+            featureRoomRepo.save(featureRoom);
+        }
+
     }
 
 }

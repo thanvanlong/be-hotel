@@ -39,4 +39,9 @@ public class FeatureRoomServiceImpl implements FeatureRoomService{
 
         return response;
     }
+
+    @Override
+    public long count() {
+        return this.featureRoomRepo.count();
+    }
 }

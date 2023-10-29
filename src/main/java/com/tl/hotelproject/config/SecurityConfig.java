@@ -26,15 +26,15 @@ public class SecurityConfig {
 
     @Autowired
     UserService userService;
-    @Bean
-    public PasswordEncoder bCryptPasswordEncoder(){
-        return PassEncoder.getInstance();
-    }
+
+    @Autowired
+    PasswordEncoder bCryptPasswordEncoder;
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService);
-        authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return authenticationProvider;
     }
 
@@ -47,7 +47,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
     }
     @Bean

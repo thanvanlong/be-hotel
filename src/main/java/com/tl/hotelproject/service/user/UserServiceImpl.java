@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepo userRepo;
-    private final PassEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder;
+
+
     @Override
     @Transactional
 
@@ -23,6 +27,8 @@ public class UserServiceImpl implements UserService {
         if (userRepo.findUserByEmail(user.getEmail()).isPresent()) {
             throw new Exception("Account has already exist");
         } else {
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepo.save(user);
         }
     }
@@ -50,6 +56,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void find(String id) {
 
+    }
+
+    @Override
+    public long count() {
+        return this.userRepo.count();
     }
 
     @Override
