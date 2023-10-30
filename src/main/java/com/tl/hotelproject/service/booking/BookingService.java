@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Service
 public interface BookingService {
-    String save(AddBookingDto body, int discount) throws Exception;
+    String save(AddBookingDto body, int discount, boolean clientBk) throws Exception;
 
     String updateUsedService(String id, UpdateUsedServicesDto[] body) throws Exception;
 

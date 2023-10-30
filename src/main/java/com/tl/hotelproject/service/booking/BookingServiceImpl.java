@@ -6,6 +6,7 @@ import com.tl.hotelproject.entity.Metadata;
 import com.tl.hotelproject.entity.bill.Bill;
 import com.tl.hotelproject.entity.bill.PaymentFor;
 import com.tl.hotelproject.entity.bill.PaymentState;
+import com.tl.hotelproject.entity.bill.PaymentType;
 import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.booking.BookingState;
 import com.tl.hotelproject.entity.client.Client;
@@ -51,7 +52,7 @@ public class BookingServiceImpl implements BookingService{
 
 
     @Override
-    public String save(AddBookingDto body, int discount) throws Exception {
+    public String save(AddBookingDto body, int discount, boolean clientBk) throws Exception {
         Room room = roomService.findById(body.getIdRoom());
 
 
@@ -90,11 +91,14 @@ public class BookingServiceImpl implements BookingService{
         List<Bill> bills = new ArrayList<>();
         bills.add(bill);
         booking.setBills(bills);
+        if(!clientBk) body.setPaymentType(PaymentType.Cash);
 
         String url = this.billService.initBill(booking, body.getPaymentType());
 
 
-        return "Da dat thanh cong";
+        if(clientBk)
+            return url;
+        return "dat phong thanh cong";
     }
 
     @Override

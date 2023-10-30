@@ -109,10 +109,10 @@ public class BookingController {
         try {
             Promotion promotion = promotionService.getPromotionByStartDateAndEndDate();
             if (promotion != null) {
-                return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, promotion.getDiscount()), "200","Success", true));
+                return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, promotion.getDiscount(), true), "200","Success", true));
             }
 
-            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, 0), "200","Success", true));
+            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, 0, true), "200","Success", true));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -123,10 +123,10 @@ public class BookingController {
         try {
             Promotion promotion = promotionService.getPromotionByStartDateAndEndDate();
             if (promotion != null) {
-                return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, promotion.getDiscount()), "200","Success", true));
+                return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, promotion.getDiscount(), false), "200","Success", true));
             }
 
-            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, 0), "200","Success", true));
+            return ResponseEntity.ok(new ResponseDTO<>(this.bookingService.save(body, 0, false), "200","Success", true));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
