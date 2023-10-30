@@ -95,7 +95,7 @@ public class VnpayUtils {
         vnp_Params.put("vnp_Version",vnp_Version);
         vnp_Params.put("vnp_Command",vnp_Command);
         vnp_Params.put("vnp_TmnCode",vnp_TmnCode);
-        vnp_Params.put("vnp_Amount",String.valueOf(createPaymentDto.getAmount()));
+        vnp_Params.put("vnp_Amount",String.valueOf(createPaymentDto.getAmount() * 100));
         vnp_Params.put("vnp_CurrCode","VND");
         if(createPaymentDto.getBankCode() !=null && !createPaymentDto.getBankCode().isEmpty()) {
             vnp_Params.put("vnp_BankCode", createPaymentDto.getBankCode());
