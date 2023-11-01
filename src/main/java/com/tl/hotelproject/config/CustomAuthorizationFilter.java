@@ -41,7 +41,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if(header != null && header.startsWith("Bearer ")){
                 try {
                     String token = header.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes(StandardCharsets.UTF_8));
+                    Algorithm algorithm = Algorithm.HMAC256("hotel".getBytes(StandardCharsets.UTF_8));
                     JWTVerifier jwtVerifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = jwtVerifier.verify(token);
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
