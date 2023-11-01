@@ -38,21 +38,15 @@ public class Room extends CommonObjectDTO {
     @Column(nullable = true)
     private boolean isDelete = false;
 
-//    @Column(columnDefinition = "text[]")
     @ElementCollection(fetch = FetchType.EAGER)
-//    @Type(StringArrayType.class)
-//    @Column(
-//            name = "images",
-//            columnDefinition = "text[]"
-//    )
     private List<String> images;
-
-//    @OneToMany(mappedBy = "room")
-//    private List<BookedRoom> bookedRooms;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
+    private List<RoomName> roomNames;
 
     @ManyToMany
     @JoinTable(

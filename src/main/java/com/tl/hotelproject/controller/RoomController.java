@@ -1,8 +1,11 @@
 package com.tl.hotelproject.controller;
 
+import com.google.gson.Gson;
+import com.tl.hotelproject.dtos.room.AddRoomNameDto;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.room.FeatureRoom;
 import com.tl.hotelproject.entity.room.Room;
+import com.tl.hotelproject.entity.room.RoomName;
 import com.tl.hotelproject.repo.FeatureRoomRepo;
 import com.tl.hotelproject.repo.RoomRepo;
 import com.tl.hotelproject.service.room.FeatureRoomService;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/room")
@@ -126,7 +130,6 @@ public class RoomController {
         }
 
 
-
         roomRepo.save(room);
         return ResponseEntity.ok(new ResponseDTO<>("Save Room Done!", "200", "Success", true));
     }
@@ -189,9 +192,25 @@ public class RoomController {
         }
         room.setImages(imgUrls);
 
-        roomRepo.save(room);
+        roomService.update(room);
 
         return ResponseEntity.ok(new ResponseDTO<>("Update Room Done!", "200", "Success", true));
+    }
+
+    @PostMapping(value = "/save-room-name/{id}",  produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDTO<String>> saveRoomName(@PathVariable("id") String id, @RequestBody List<AddRoomNameDto> body) throws Exception{
+        Room room = new Room();
+        room.setId(id);
+        List<RoomName> roomNames = body.stream().map(it -> {
+            RoomName roomName = new RoomName();
+            if(it.getId() != null) roomName.setId(it.getId());
+            roomName.setName(it.getName());
+            return roomName;
+        }).toList();
+
+        room.setRoomNames(roomNames);
+
+        return ResponseEntity.ok(new ResponseDTO<>(roomService.updateRoomName(room), "200", "Success", true));
     }
 
     @DeleteMapping("")

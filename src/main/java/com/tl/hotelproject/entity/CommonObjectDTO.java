@@ -15,6 +15,7 @@ public abstract class CommonObjectDTO {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
+        updatedAt = new Date();
     }
 
     @PreUpdate

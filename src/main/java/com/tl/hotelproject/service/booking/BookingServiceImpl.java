@@ -11,10 +11,12 @@ import com.tl.hotelproject.entity.booking.Booking;
 import com.tl.hotelproject.entity.booking.BookingState;
 import com.tl.hotelproject.entity.client.Client;
 import com.tl.hotelproject.entity.room.Room;
+import com.tl.hotelproject.entity.room.RoomName;
 import com.tl.hotelproject.entity.services.Services;
 import com.tl.hotelproject.entity.services.UsedServices;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.repo.ClientRepo;
+import com.tl.hotelproject.repo.RoomNameRepo;
 import com.tl.hotelproject.service.bill.BillService;
 import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.service.services.ServicesService;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +53,9 @@ public class BookingServiceImpl implements BookingService{
     @Autowired
     private BillService billService;
 
+    @Autowired
+    private RoomNameRepo roomNameRepo;
+
 
     @Override
     public String save(AddBookingDto body, int discount, boolean clientBk) throws Exception {
@@ -66,18 +72,33 @@ public class BookingServiceImpl implements BookingService{
         client.setName();
         clientRepo.save(client);
 
-//            List<BookedRoom> roomList = new ArrayList<>();
-//            roomList.add(bookedRoom);
+        List<RoomName> roomName = new ArrayList<>();
+
+        for(RoomName roomName1: room.getRoomNames()){
+            if(roomName1.isBooking()) continue;
+            roomName1.setBooking(true);
+            roomName.add(roomName1);
+
+            if(roomName.size() == body.getQuantity()) break;
+        }
+        if(roomName.size() < body.getQuantity()) throw new Exception("khong du phong");
+
+        // update trang thai phong
+        roomNameRepo.saveAll(roomName);
+        room.setQuantity(room.getQuantity()-body.getQuantity());
+        roomService.update(room);
 
         Booking booking = new Booking();
         booking.setClient(client);
         booking.setRoom(room);
+        booking.setSelloff(discount);
         booking.setCheckin(body.getCheckin());
         booking.setCheckout(body.getCheckout());
         booking.setBookingState(BookingState.AdminInit);
         booking.setPrice((int) (room.getPrice() * ((float) (100 - discount)/100)));
-        if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong");
+        if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong phong");
         booking.setQuantity(body.getQuantity());
+        booking.setRoomName(roomName.stream().map(RoomName::getName).collect(Collectors.toList()));
 
         booking.setTotalAmount();
         booking = bookingRepo.save(booking);
@@ -91,10 +112,9 @@ public class BookingServiceImpl implements BookingService{
         List<Bill> bills = new ArrayList<>();
         bills.add(bill);
         booking.setBills(bills);
+
         if(!clientBk) body.setPaymentType(PaymentType.Cash);
-
         String url = this.billService.initBill(booking, body.getPaymentType());
-
 
         if(clientBk)
             return url;
@@ -172,11 +192,14 @@ public class BookingServiceImpl implements BookingService{
         Booking booking = this.findById(id);
         booking.setBookingState(BookingState.Done);
 
+
+
         if(!booking.isCheckedIn()) throw new Exception("Phong chua checkIn");
 
         if(booking.getBills().get(0).getPaymentState() == PaymentState.Pending) {
             this.billService.setBillDone(booking.getBills().get(0).getId());
         }
+
         if(booking.getUsedServices() != null){
             Bill bill = new Bill();
             bill.setTotalAmount(booking.getUsedServices().stream()
@@ -186,6 +209,9 @@ public class BookingServiceImpl implements BookingService{
 //            bill.setUser(user);
             this.billService.setBillServices(bill);
         }
+
+        // cap nhat lai so phong
+        roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
 
         bookingRepo.save(booking);
         return "checkout success";

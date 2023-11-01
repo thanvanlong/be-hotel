@@ -15,7 +15,6 @@ import org.hibernate.annotations.UuidGenerator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @AllArgsConstructor
@@ -42,9 +41,6 @@ public class Booking extends CommonObjectDTO {
     private int totalAmount;
     private BookingState bookingState = BookingState.Init;
 
-//    @OneToMany(mappedBy = "booking")
-//    private List<BookedRoom> bookedRooms;
-
     @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
     private List<UsedServices> usedServices;
 
@@ -55,6 +51,9 @@ public class Booking extends CommonObjectDTO {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roomName;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
