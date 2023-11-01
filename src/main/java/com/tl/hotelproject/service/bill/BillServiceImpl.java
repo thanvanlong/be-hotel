@@ -15,6 +15,7 @@ import com.tl.hotelproject.entity.booking.BookingState;
 import com.tl.hotelproject.repo.BillRepo;
 import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.mail.EmailSender;
+import com.tl.hotelproject.service.room.RoomService;
 import com.tl.hotelproject.utils.VnpayUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class BillServiceImpl implements BillService{
 
     @Autowired
     private BookingRepo bookingRepo;
+
+    @Autowired
+    private RoomService roomService;
 
     @Autowired
     private VnpayUtils vnpayUtils;
@@ -158,6 +162,8 @@ public class BillServiceImpl implements BillService{
         bill.setPaymentState(PaymentState.Reject);
         Booking booking = bookingRepo.getBookingByBill(bill.getId());
         booking.setBookingState(BookingState.Reject);
+
+        roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
         bookingRepo.save(booking);
         billRepo.save(bill);
 
