@@ -209,6 +209,7 @@ public class RoomController {
         }).toList();
 
         room.setRoomNames(roomNames);
+        room.setQuantity(roomNames.size());
 
         return ResponseEntity.ok(new ResponseDTO<>(roomService.updateRoomName(room), "200", "Success", true));
     }

@@ -1,13 +1,16 @@
 package com.tl.hotelproject.config;
 
+import com.tl.hotelproject.entity.user.Role;
 import com.tl.hotelproject.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -57,6 +60,43 @@ public class SecurityConfig {
         http.csrf().disable();
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/booking/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/room/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/services/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/promotion/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/client/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/stats/**").hasAuthority("ROLE_ADMIN");
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/stats/**").authenticated();
+
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/booking/client-booking").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/booking/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/room/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/room/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/services/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/services/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/promotion/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.POST, "/api/v1/client/**").authenticated();
+
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/users/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/booking/**").authenticated();
+//        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/room/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/room/**").authenticated();
+//        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/services/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/services/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/promotion/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.PUT, "/api/v1/client/**").authenticated();
+
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").permitAll();
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/booking/**").authenticated();
+//        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/room/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/room/**").authenticated();
+//        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/services/**").hasAnyAuthority(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/services/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/promotion/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.DELETE, "/api/v1/client/**").authenticated();
+
         http.authorizeRequests().anyRequest().permitAll();
         http.addFilter(customeAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -49,16 +49,18 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("hotel".getBytes(StandardCharsets.UTF_8));
+        long time = (30L * 24 * 60 * 60 * 1000);
+        long now = new Date().getTime();
         String access_token = JWT.create()
                 .withSubject(user.getName())
                 .withKeyId(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 1000 * 1000))
+                .withExpiresAt(new Date(now + time))
                 .withIssuer(request.getRequestURI())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         String refresh_token = JWT.create()
                 .withSubject(user.getEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 60 * 1000))
                 .withIssuer(request.getRequestURI())
                 .sign(algorithm);
 
@@ -69,7 +71,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setSecure(true);
-        cookie.setMaxAge( 1 * 24 * 60 * 60 *1000);
+        cookie.setMaxAge(24 * 60 * 60 * 1000);
         response.addCookie(cookie);
 //        tokens.put("data", data);
         response.setContentType(APPLICATION_JSON_VALUE);
