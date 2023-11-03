@@ -190,11 +190,13 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public String cancel(String id) throws Exception {
         Booking booking = this.findById(id);
-        if(booking.isCheckedIn()) throw new Exception("Khong the huy phong");
+        if(booking.isCheckedIn() || booking.getBookingState() == BookingState.Done
+                || booking.getBookingState() == BookingState.Reject ) throw new Exception("Khong the huy phong");
         booking.setBookingState(BookingState.Reject);
-        roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
+        if(booking.getRoom() != null && !booking.getRoomName().isEmpty())
+            roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
         bookingRepo.save(booking);
-        return null;
+        return "ok";
     }
 
     @Override
@@ -204,7 +206,8 @@ public class BookingServiceImpl implements BookingService{
 
         if(!booking.isCheckedIn()) throw new Exception("Phong chua checkIn");
 
-        if(booking.getBills().get(0).getPaymentState() == PaymentState.Pending) {
+
+        if(!booking.getBills().isEmpty() && booking.getBills().get(0).getPaymentState() == PaymentState.Pending) {
             this.billService.setBillDone(booking.getBills().get(0).getId());
         }
 
@@ -219,7 +222,8 @@ public class BookingServiceImpl implements BookingService{
         }
 
         // cap nhat lai so phong
-        roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
+        if(booking.getRoom().getId() != null && !booking.getRoomName().isEmpty())
+            roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
 
         bookingRepo.save(booking);
         return "checkout success";

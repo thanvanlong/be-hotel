@@ -39,6 +39,7 @@ public class Booking extends CommonObjectDTO {
 
     @Column(nullable = true)
     private int totalAmount;
+    @Enumerated
     private BookingState bookingState = BookingState.Init;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
