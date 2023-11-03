@@ -26,9 +26,7 @@ import java.util.Map;
 public class PromotionController {
     @Autowired
     private PromotionService promotionService;
-
-    @Autowired
-    private PromotionRepo promotionRepo;
+    
 
     @GetMapping("/list")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listPromotion(@RequestParam(defaultValue = "0") int page,
@@ -36,7 +34,7 @@ public class PromotionController {
                                                                      @RequestParam(defaultValue = "id,desc") String[] sort,
                                                                      @RequestParam(required = false) String search) {
 
-        Map<String, Object> promotionPage = promotionService.pagingSort(page, limit);
+        Map<String, Object> promotionPage = promotionService.search(page, limit, search);
 
 
         return ResponseEntity.ok(new ResponseDTO<>(promotionPage, "200", "Success", true));

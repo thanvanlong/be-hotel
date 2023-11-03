@@ -66,6 +66,24 @@ public class PromotionServiceImpl implements PromotionService{
     }
 
     @Override
+    public Map<String, Object> search(int page, int limit, String search) {
+        Pageable pagingSort = PageRequest.of(page, limit);
+        Page<Promotion> promotionPage = promotionRepo.findByNameContaining(search ,pagingSort);
+
+        Metadata metadata = new Metadata();
+        metadata.setPageNumber(promotionPage.getNumber());
+        metadata.setPageSize(promotionPage.getSize());
+        metadata.setTotalPages(promotionPage.getTotalPages());
+        metadata.setTotalItems(promotionPage.getTotalElements());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", promotionPage.getContent());
+        response.put("metadata", metadata);
+
+        return response;
+    }
+
+    @Override
     public Promotion getPromotionByStartDateAndEndDate() {
         return promotionRepo.findAllByStartDateIsBeforeAndEndDateIsAfter(LocalDate.now().plusDays(1), LocalDate.now().plusDays(1));
     }

@@ -20,6 +20,8 @@ public interface BookingService {
     Map<String, Object> pagingSort(int page, int limit);
 
     String checkIn(String id) throws Exception;
+
+    String cancel(String id) throws Exception;
     String checkOut(String id) throws Exception;
 
     Map<String, Object> search(String search, int page, int limit);

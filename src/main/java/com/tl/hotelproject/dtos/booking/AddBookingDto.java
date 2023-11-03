@@ -18,6 +18,8 @@ public class AddBookingDto {
     private String sex;
     private String email;
     private String tel;
+    private String cccd;
+    private String address;
 
     // bookedRoom
     private Date checkin;

@@ -137,9 +137,15 @@ public class BookingController {
         return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkIn(id), "200", "success", true));
     }
 
+    @PostMapping("cancel/{id}")
+    public ResponseEntity<ResponseDTO<String>> cancel(@PathVariable("id") String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.cancel(id), "200", "success", true));
+    }
+
     @PostMapping("check-out/{id}")
     public ResponseEntity<ResponseDTO<String>> checkOut(@PathVariable("id") String id) throws Exception{
-        return ResponseEntity.ok(new ResponseDTO<>( this.bookingService.checkOut(id), "200", "success", true));
+        this.bookingService.checkOut(id);
+        return ResponseEntity.ok(new ResponseDTO<>( "checkout thanh cong", "200", "success", true));
     }
 
     @PutMapping("update-service/{id}")
@@ -151,9 +157,9 @@ public class BookingController {
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listBooking(@RequestParam(defaultValue = "0") int page,
                                                                          @RequestParam(defaultValue = "10") int limit,
                                                                          @RequestParam(defaultValue = "id,desc") String[] sort,
-                                                                         @RequestParam(required = false) String filter) {
+                                                                         @RequestParam(required = false, defaultValue = "") String search) {
 
-        Map<String, Object> bookingList = bookingService.pagingSort(page, limit);
+        Map<String, Object> bookingList = bookingService.search(search, page, limit);
 
 
         return ResponseEntity.ok(new ResponseDTO<>(bookingList, "200", "Success", true));

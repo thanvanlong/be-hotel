@@ -188,11 +188,19 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    public String cancel(String id) throws Exception {
+        Booking booking = this.findById(id);
+        if(booking.isCheckedIn()) throw new Exception("Khong the huy phong");
+        booking.setBookingState(BookingState.Reject);
+        roomService.revertRoom(booking.getRoom().getId(), booking.getRoomName());
+        bookingRepo.save(booking);
+        return null;
+    }
+
+    @Override
     public String checkOut(String id) throws Exception {
         Booking booking = this.findById(id);
         booking.setBookingState(BookingState.Done);
-
-
 
         if(!booking.isCheckedIn()) throw new Exception("Phong chua checkIn");
 
@@ -219,7 +227,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Map<String, Object> search(String search, int page, int limit) {
-        Pageable pagingSort = PageRequest.of(page, limit);
+        Pageable pagingSort = PageRequest.of(page, limit, Sort.Direction.DESC, "createdAt");
         Page<Booking>bookingPage = bookingRepo.search(search, pagingSort);
 
         Metadata metadata = new Metadata();

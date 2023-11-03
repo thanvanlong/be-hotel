@@ -25,6 +25,7 @@ public class Services extends CommonObjectDTO {
     private String unity;
     private int price;
     private String description;
+    private String image;
 
     @Column(nullable = true)
     private boolean isDelete = false;

@@ -25,8 +25,8 @@ public class ClientController {
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listClient(@RequestParam(defaultValue = "0") int page,
                                                                          @RequestParam(defaultValue = "10") int limit,
                                                                          @RequestParam(defaultValue = "id,desc") String[] sort,
-                                                                         @RequestParam(required = false) String search){
-        Map<String, Object> clientList = clientService.pagingSort(page, limit);
+                                                                         @RequestParam(required = false, defaultValue = "") String search){
+        Map<String, Object> clientList = clientService.pagingSortSearch(page, limit, search);
 
 
         return ResponseEntity.ok(new ResponseDTO<>(clientList, "200", "Success", true));

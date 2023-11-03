@@ -29,6 +29,7 @@ public class Client extends CommonObjectDTO {
     private String sex;
     private String email;
     private String tel;
+    private String cccd;
     private String note;
 
     @OneToMany(mappedBy = "client")

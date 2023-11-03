@@ -60,9 +60,9 @@ public class RoomController {
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listRoom(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int limit,
                                                       @RequestParam(defaultValue = "id,desc") String[] sort,
-                                                      @RequestParam(required = false) String search) {
+                                                      @RequestParam(required = false, defaultValue = "") String search) {
 
-        Map<String, Object> roomList = roomService.pagingSort(page, limit);
+        Map<String, Object> roomList = roomService.pagingSortSearch(page, limit, search);
 
 
         return ResponseEntity.ok(new ResponseDTO<>(roomList, "200", "Success", true));

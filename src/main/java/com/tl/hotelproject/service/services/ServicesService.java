@@ -12,6 +12,7 @@ public interface ServicesService {
     Services findById(String id) throws Exception;
     String save(UsedServices usedServices) throws  Exception;
     Map<String, Object> pagingSort(int page, int limit);
+    Map<String, Object> search(int page, int limit, String search);
 
     String save(Services services) throws Exception;
 

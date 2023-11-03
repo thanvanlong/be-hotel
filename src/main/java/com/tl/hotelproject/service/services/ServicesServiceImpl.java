@@ -55,6 +55,23 @@ public class ServicesServiceImpl implements ServicesService{
     }
 
     @Override
+    public Map<String, Object> search(int page, int limit, String search) {
+        Pageable pagingSort = PageRequest.of(page, limit);
+        Page<Services> servicesPage = servicesRepo.findByNameContaining(search, pagingSort);
+
+        Metadata metadata = new Metadata();
+        metadata.setPageNumber(servicesPage.getNumber());
+        metadata.setPageSize(servicesPage.getSize());
+        metadata.setTotalPages(servicesPage.getTotalPages());
+        metadata.setTotalItems(servicesPage.getTotalElements());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", servicesPage.getContent());
+        response.put("metadata", metadata);
+        return response;
+    }
+
+    @Override
     public String save(Services services) throws Exception {
         Optional<Services> services1 = this.servicesRepo.findByName(services.getName());
         if(services1.isPresent()) throw new Exception("da ton tai");

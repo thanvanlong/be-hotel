@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -23,9 +24,6 @@ import java.util.*;
 public class RoomServiceImpl implements RoomService {
     @Autowired
     private RoomRepo roomRepo;
-
-    @Autowired
-    private FeatureRoomRepo featureRoomRepo;
 
     @Autowired
     private RoomNameRepo roomNameRepo;
@@ -56,12 +54,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String updateRoomName(Room room) throws Exception{
         Room room1 = findById(room.getId());
 
         if(room.getRoomNames() != null){
             for(RoomName roomName: room.getRoomNames()) {
-                // Theem mowis
+                // check ton tai
                 if(roomName.getId() != null) {
                     Optional<RoomName> roomName1 = this.roomNameRepo.findBySearch(StringUtils.removeAccents(roomName.getName().toLowerCase()));
                     if(roomName1.isPresent()){
@@ -70,17 +69,23 @@ public class RoomServiceImpl implements RoomService {
                         }
                     }
                 }
+                // neu khong co id
                 else {
                     Optional<RoomName> roomName1 = this.roomNameRepo.findBySearch(StringUtils.removeAccents(roomName.getName().toLowerCase()));
+                    // neu phong co ton tai
                     if(roomName1.isPresent()){
-                        for(RoomName rName: room1.getRoomNames()) {
-                            if(roomName1.get().getName().equals(rName.getName())) throw new Exception("ten da duoc dung");
-                        }
+                        throw new Exception("Phong da duoc dung");
+                        // for check
+//                        for(RoomName rName: room1.getRoomNames()) {
+//                            // neu phong co ten giong voi ten cua phong co san
+//                            if(roomName1.get().getName().equals(rName.getName())) throw new Exception("ten da duoc dung");
+//                        }
 
                     }
                 }
             }
 
+            // xoa phong
             for(RoomName roomName: room1.getRoomNames()){
                 boolean check = false;
                 for(RoomName roomName1: room.getRoomNames()){
@@ -181,7 +186,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room getRoomBySlugWithFeature(String slug) {
-        return this.roomRepo.findRoomBySlugWithFeatureRooms(slug);
+        return this.roomRepo.findBySlug(slug);
     }
 
     @Override

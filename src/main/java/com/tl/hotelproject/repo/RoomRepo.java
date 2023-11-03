@@ -20,8 +20,8 @@ public interface RoomRepo extends JpaRepository<Room, String> {
     @Query("SELECT r FROM Room r LEFT JOIN FETCH r.featureRooms WHERE r.id = :roomId")
     Room findRoomWithFeatureRooms(@Param("roomId") String roomId);
 
-    @Query("SELECT r FROM Room r LEFT JOIN FETCH r.featureRooms LEFT join FETCH r.images WHERE r.slug = :slug")
-    Room findRoomBySlugWithFeatureRooms(@Param("slug") String slug);
+//    @Query("SELECT r FROM Room r LEFT JOIN FETCH r.featureRooms LEFT join FETCH r.images WHERE r.slug = :slug")
+    Room findBySlug(String slug);
 
     @Query("SELECT r.name, r.id, r.description, r.createdAt FROM Room r WHERE r.isDelete = false ")
     List<Object[]> listRoomSelect();

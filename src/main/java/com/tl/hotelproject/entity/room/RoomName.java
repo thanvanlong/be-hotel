@@ -22,9 +22,10 @@ public class RoomName extends CommonObjectDTO {
     @UuidGenerator
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(unique = true)
     private String search;
     private boolean isBooking;
 
