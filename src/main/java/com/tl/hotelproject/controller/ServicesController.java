@@ -58,7 +58,7 @@ public class ServicesController {
         return ResponseEntity.ok(new ResponseDTO<>(this.servicesService.save(services), "200", "Success", true)) ;
     }
 
-    @PutMapping("{id}")
+    @PutMapping("")
     public ResponseEntity<ResponseDTO<String>> update(@RequestParam("id") String id,
                                                       @RequestParam(value = "name", required = false) String name,
                                                       @RequestParam(value = "unity", required = false) String unity,
