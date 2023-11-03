@@ -83,7 +83,7 @@ public class ServicesServiceImpl implements ServicesService{
     @Override
     public String update(Services services) throws Exception {
         Optional<Services> services1 = this.servicesRepo.findByName(services.getName());
-        if(services1.isPresent()) throw new Exception("da ton tai");
+        if(services1.isPresent() && !services1.get().getId().equals(services.getId())) throw new Exception("da ton tai");
 
         this.findById(services.getId());
         this.servicesRepo.save(services);
