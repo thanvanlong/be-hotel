@@ -55,7 +55,7 @@ public class ClientServiceImpl implements ClientService{
     @Override
     public Map<String, Object> pagingSortSearch(int page, int limit, String search) {
         Pageable pagingSort = PageRequest.of(page, limit);
-        Page<Client> clientPage = clientRepo.findByNameContaining(search, pagingSort);
+        Page<Client> clientPage = clientRepo.search(search, pagingSort);
 
         Metadata metadata = new Metadata();
         metadata.setPageNumber(clientPage.getNumber());
