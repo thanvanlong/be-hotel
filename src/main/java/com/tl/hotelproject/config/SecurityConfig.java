@@ -61,7 +61,7 @@ public class SecurityConfig {
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
         http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll();
-        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/booking/**").authenticated();
+        http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/booking/**").permitAll();
         http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/room/**").permitAll();
         http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/services/**").permitAll();
         http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/promotion/**").permitAll();

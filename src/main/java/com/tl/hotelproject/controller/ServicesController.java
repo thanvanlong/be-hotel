@@ -78,8 +78,7 @@ public class ServicesController {
     @DeleteMapping("")
     public ResponseEntity<ResponseDTO<String>> delete(@RequestBody String[] ids) throws Exception{
         for (String id : ids) {
-            Services services = this.servicesService.findById(id);
-            if(services.isDelete()) throw new Exception("dich vu khong ton tai");
+            this.servicesService.findById(id);
         }
 
         for (String id : ids) {

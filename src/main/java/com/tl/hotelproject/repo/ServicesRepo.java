@@ -14,10 +14,10 @@ import java.util.Optional;
 @Repository
 public interface ServicesRepo extends JpaRepository<Services, String> {
 
-    @Query("SELECT s.name, s.id, s.unity, s.createdAt, s.description FROM Services s WHERE s.isDelete = false")
+    @Query("SELECT s.name, s.id, s.unity, s.createdAt, s.description FROM Services s")
     List<Object[]> listServiceSelect();
 
-    @Query("SELECT s FROM Services s WHERE s.isDelete = false and s.name = :name")
+    @Query("SELECT s FROM Services s WHERE s.name = :name")
     Optional<Services> findByName(String name);
 
     Page<Services> findByNameContaining(String search, Pageable pageable);

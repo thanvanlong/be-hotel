@@ -4,6 +4,6 @@ public enum BookingState {
     Init, // khoi tao
     AdminInit, // khoi tao bang admin
     Success, // khi thanh toan phong thanh cong
-    Done, // khi thanh toan het
+    Done, // check out
     Reject // don bi huy
 }

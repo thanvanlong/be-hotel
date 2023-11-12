@@ -26,7 +26,7 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
 
     @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
             "FROM Booking b " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
             "and b.id = :id "+
             "GROUP BY b.room.id, b.room.name")
@@ -39,20 +39,20 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
 
     @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
             "FROM Booking b " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "GROUP BY b.room.id, b.room.name")
     List<Object[]> calculateRoomRevenueAndBookings(int year);
 
     @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
             "FROM Booking b " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "and MONTH(b.createdAt) = :month "+
             "GROUP BY b.room.id, b.room.name")
     List<Object[]> calculateRoomRevenueAndBookings(int year, int month);
 
     @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b) " +
             "FROM Booking b " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
             "GROUP BY b.room.id, b.room.name")
     List<Object[]> calculateRoomRevenueAndBookings(int year, int month, int day);
@@ -67,14 +67,14 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
             "FROM Booking b " +
             "INNER JOIN b.usedServices u " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "GROUP BY u.services.id, u.services.name")
     List<Object[]> calculateRevenueByService(int year);
 
     @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
             "FROM Booking b " +
             "INNER JOIN b.usedServices u " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "and MONTH(b.createdAt) = :month " +
             "GROUP BY u.services.id, u.services.name")
     List<Object[]> calculateRevenueByService(int year, int month);
@@ -82,7 +82,7 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
     @Query("SELECT u.services.id, u.services.name, SUM(u.price) " +
             "FROM Booking b " +
             "INNER JOIN b.usedServices u " +
-            "where b.room.isDelete = false and (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2) AND YEAR(b.createdAt) = :year "+
             "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
             "GROUP BY u.services.id, u.services.name")
     List<Object[]> calculateRevenueByService(int year, int month, int day);

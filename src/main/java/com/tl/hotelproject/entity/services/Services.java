@@ -27,9 +27,6 @@ public class Services extends CommonObjectDTO {
     private String description;
     private String image;
 
-    @Column(nullable = true)
-    private boolean isDelete = false;
-
     @OneToMany(mappedBy = "services")
     @JsonIgnore
     private List<UsedServices> usedServices;
