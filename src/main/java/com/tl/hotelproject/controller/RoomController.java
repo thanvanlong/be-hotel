@@ -217,8 +217,7 @@ public class RoomController {
     @DeleteMapping("")
     public ResponseEntity<ResponseDTO<String>> delete(@RequestBody String[] ids) throws Exception{
         for (String id : ids) {
-            Room room = this.roomService.findById(id);
-            if(room.isDelete()) throw new Exception("phong khong ton tai");
+            this.roomService.findById(id);
         }
 
         for (String id : ids) {

@@ -32,7 +32,7 @@ public class PromotionController {
     public ResponseEntity<ResponseDTO<Map<String, Object>>> listPromotion(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int limit,
                                                                      @RequestParam(defaultValue = "id,desc") String[] sort,
-                                                                     @RequestParam(required = false) String search) {
+                                                                     @RequestParam(required = false, defaultValue = "") String search) {
 
         Map<String, Object> promotionPage = promotionService.search(page, limit, search);
 

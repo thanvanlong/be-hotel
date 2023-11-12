@@ -36,7 +36,6 @@ public class Room extends CommonObjectDTO {
     @Column(nullable = true)
     private int quantity = 10;
     @Column(nullable = true)
-    private boolean isDelete = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> images;

@@ -69,6 +69,8 @@ public class BookingServiceImpl implements BookingService{
         client.setTel(body.getTel());
         client.setEmail(body.getEmail());
         client.setSex(body.getSex());
+        client.setAddress(body.getAddress());
+        client.setCccd(body.getCccd());
         client.setName();
         clientRepo.save(client);
 
