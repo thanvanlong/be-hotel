@@ -16,8 +16,11 @@ import com.tl.hotelproject.repo.BookingRepo;
 import com.tl.hotelproject.service.booking.BookingService;
 import com.tl.hotelproject.service.mail.EmailSender;
 import com.tl.hotelproject.service.promotion.PromotionService;
+import com.tl.hotelproject.utils.StringUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,9 +57,14 @@ public class BookingController {
         bookingRepo.save(booking);
 
         List<UsedServices> services = booking.getUsedServices();
+        if(services != null) {
+            for (UsedServices service : services) {
+                service.setName(StringUtils.removeAccents(service.getName()));
+            }
+        }
 
         Map<String, Object> body = new HashMap<>();
-        body.put("roomName", booking.getRoom().getName());
+        body.put("roomName", StringUtils.removeAccents(booking.getRoom().getName()));
         body.put("quantity", booking.getQuantity());
         body.put("price", booking.getPrice() * booking.getQuantity());
         body.put("id", booking.getId());
@@ -73,7 +81,7 @@ public class BookingController {
         String outPath ="export/"+ id+"_invoice.pdf";
         PdfRendererBuilder builder = new PdfRendererBuilder();
         builder.useFastMode();
-        builder.withHtmlContent(html, null);
+        builder.withHtmlContent(html, "UTF-8");
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
         builder.toStream(pdfOutputStream);
         builder.run();
