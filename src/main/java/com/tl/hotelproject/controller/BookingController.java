@@ -60,8 +60,8 @@ public class BookingController {
         body.put("quantity", booking.getQuantity());
         body.put("price", booking.getPrice() * booking.getQuantity());
         body.put("id", booking.getId());
-        body.put("createdDate", new Date().getTime());
-        body.put("paymentDate", new Date().getTime());
+        body.put("createdDate", new Date().toString());
+        body.put("paymentDate", booking.getCreatedAt().toString());
         body.put("s", services == null ? false : true);
         body.put("services", services);
         body.put("totalAmount", booking.getTotalAmount());

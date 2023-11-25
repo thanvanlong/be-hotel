@@ -51,6 +51,8 @@ class RoomStats {
 class RoomStatsExcel extends RoomStats{
     private String description;
     private Date createdAt;
+    private int bookingCount = 0;
+    private long price = 0;
 }
 
 @Data
@@ -70,6 +72,8 @@ class RevenueByServiceExcel {
     private String unity;
     private Date createdAt;
     private long value;
+    private int bookingCount = 0;
+    private long price = 0;
 }
 
 @RestController
@@ -152,7 +156,7 @@ public class StatsController {
         if (user != null) {
             cell.setCellValue(user.getName());
         } else {
-            cell.setCellValue("Nguyễn Thị Linh");
+            cell.setCellValue("Nguyễn Thị Thùy Linh");
         }
 
         //Create CellStyle
@@ -181,30 +185,50 @@ public class StatsController {
         Cell cell = rowTime.createCell(0);
         cell.setCellValue("Ngày lập: " + LocalDateTime.now().toString());
         cell.setCellStyle(cellStyle);
-        writeHeaderForRoom(sheet, 1, "Báo cáo doanh thu dịch vụ năm 2023");
+        writeHeaderForRoom(sheet, 1, "Báo cáo doanh thu dịch vụ năm " + year);
 
+        Row dataRowH = sheet.createRow(2);
+        cell = dataRowH.createCell(0);
+        cell.setCellValue("STT");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(1);
+        cell.setCellValue("Loại phòng");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(2);
+        cell.setCellValue("Số lần thuê");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(3);
+        cell.setCellValue("Đơn giá");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(4);
+        cell.setCellValue("Doanh thu");
+        cell.setCellStyle(cellStyle);
 
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 1; i <= revenueByServiceExcels.size() ; i++) {
+        for(int i = 2; i <= revenueByServiceExcels.size() + 1 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
             cell.setCellValue(i);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByServiceExcels.get(i-1).getName());
+            cell.setCellValue(revenueByServiceExcels.get(i-2).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-1).getDescription());
+            cell.setCellValue(revenueByServiceExcels.get(i-2).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-1).getCreatedAt().toString());
+            cell.setCellValue(revenueByServiceExcels.get(i-2).getPrice());
 
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-1).getValue());
-            sum += revenueByServiceExcels.get(i-1).getValue();
+            cell.setCellValue(revenueByServiceExcels.get(i-2).getValue());
+            sum += revenueByServiceExcels.get(i-2).getValue();
         }
         Row dataRow = sheet.createRow(revenueByServiceExcels.size() + 4);
         sheet.addMergedRegion(new CellRangeAddress(revenueByServiceExcels.size() + 4, revenueByServiceExcels.size() + 4, 0, 4));
@@ -253,7 +277,7 @@ public class StatsController {
         List<RoomStatsExcel> revenueByRoomExcels = this.statsRoom(year, month, day);
 
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Revenue Service");
+        Sheet sheet = workbook.createSheet("Revenue Room");
         CellStyle cellStyle = createCellStyle(sheet, workbook);
         Row rowTime = sheet.createRow( 0);
         Cell cell = rowTime.createCell(0);
@@ -263,26 +287,47 @@ public class StatsController {
 
         writeHeaderForRoom(sheet, 1, "Báo cáo doanh thu phòng năm 2023");
 
+        Row dataRowH = sheet.createRow(2);
+        cell = dataRowH.createCell(0);
+        cell.setCellValue("STT");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(1);
+        cell.setCellValue("Loại phòng");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(2);
+        cell.setCellValue("Số lần thuê");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(3);
+        cell.setCellValue("Đơn giá");
+        cell.setCellStyle(cellStyle);
+
+        cell = dataRowH.createCell(4);
+        cell.setCellValue("Doanh thu");
+        cell.setCellStyle(cellStyle);
+
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 1; i <= revenueByRoomExcels.size() ; i++) {
+        for(int i = 2; i <= revenueByRoomExcels.size() + 1 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
-            cell.setCellValue(i);
+            cell.setCellValue(i - 1);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByRoomExcels.get(i-1).getName());
+            cell.setCellValue(revenueByRoomExcels.get(i-2).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-1).getDescription());
+            cell.setCellValue(revenueByRoomExcels.get(i-2).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-1).getCreatedAt().toString());
+            cell.setCellValue(revenueByRoomExcels.get(i-2).getPrice());
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-1).getValue());
-            sum += revenueByRoomExcels.get(i-1).getValue();
+            cell.setCellValue(revenueByRoomExcels.get(i-2).getValue());
+            sum += revenueByRoomExcels.get(i-2).getValue();
         }
         Row dataRow = sheet.createRow(revenueByRoomExcels.size() + 4);
         sheet.addMergedRegion(new CellRangeAddress(revenueByRoomExcels.size() + 4, revenueByRoomExcels.size() + 4, 0, 4));
@@ -349,12 +394,13 @@ public class StatsController {
                     check = true;
                     String name = object[1].toString();
                     String revenue = object[2].toString();
+                    double a = Double.parseDouble(revenue);
                     String count = object[3].toString();
 
                     RoomStats roomStats1 = new RoomStats();
                     roomStats1.setName(name);
                     roomStats1.setType("Doanh thu");
-                    roomStats1.setValue(Long.parseLong(revenue));
+                    roomStats1.setValue((long) a);
 
                     RoomStats roomStats2 = new RoomStats();
                     roomStats2.setName(name);
@@ -442,7 +488,9 @@ public class StatsController {
 
 //    @PostConstruct
 //    public void test(){
+//        List<Object[]> a = this.bookingRepo.calculateRoomRevenueAndBookings(2023);
 //
+//        System.out.println(new Gson().toJson(a));
 //
 //    }
 
@@ -560,6 +608,8 @@ public class StatsController {
 
                     revenueByService.setName(name);
                     revenueByService.setValue(Long.parseLong(revenue));
+                    revenueByService.setBookingCount(Integer.parseInt(object[3].toString()));
+                    revenueByService.setPrice(Long.parseLong(object[4].toString()));
                     break;
                 }
             }
@@ -605,7 +655,9 @@ public class StatsController {
                     String revenue = object[2].toString();
 
                     roomStats1.setName(name);
-                    roomStats1.setValue(Long.parseLong(revenue));
+                    roomStats1.setValue((long) Double.parseDouble(revenue));
+                    roomStats1.setBookingCount(Integer.parseInt(object[3].toString()));
+                    roomStats1.setPrice((long) Double.parseDouble((object[4].toString())));
 
                     break;
                 }
