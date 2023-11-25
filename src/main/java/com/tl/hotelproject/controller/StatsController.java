@@ -119,8 +119,8 @@ public class StatsController {
             sum += revenues[i-1].getValue();
         }
 
-        dataRow = sheet.createRow(3);
-        sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 12));
+        dataRow = sheet.createRow(4);
+        sheet.addMergedRegion(new CellRangeAddress(4, 4, 0, 12));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + sum);
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -228,7 +228,7 @@ public class StatsController {
                 sheet.setColumnWidth(columnIndex, 2000);
             } else {
                 sheet.autoSizeColumn(columnIndex);
-                sheet.setColumnWidth(columnIndex, sheet.getColumnWidth(columnIndex) + 2000);
+//                sheet.setColumnWidth(columnIndex, sheet.getColumnWidth(columnIndex) + 2000);
             }
             sheet.setDefaultRowHeight((short) 450);
         }

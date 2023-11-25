@@ -191,6 +191,7 @@ public class RoomController {
             }
         }
         room.setImages(imgUrls);
+        room.setCreatedAt(room.getCreatedAt());
 
         roomService.update(room);
 

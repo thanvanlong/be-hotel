@@ -86,6 +86,7 @@ public class ServicesServiceImpl implements ServicesService{
         if(services1.isPresent() && !services1.get().getId().equals(services.getId())) throw new Exception("da ton tai");
 
         this.findById(services.getId());
+        services.setCreatedAt(services1.get().getCreatedAt());
         this.servicesRepo.save(services);
         return "Da sua thanh cong";
     }

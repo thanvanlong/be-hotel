@@ -96,11 +96,13 @@ public class BookingServiceImpl implements BookingService{
         booking.setSelloff(discount);
         booking.setCheckin(body.getCheckin());
         booking.setCheckout(body.getCheckout());
-        booking.setBookingState(BookingState.AdminInit);
+
         booking.setPrice((int) (room.getPrice() * ((float) (100 - discount)/100)));
         if(room.getQuantity() < body.getQuantity()) throw new Exception("Khong du so luong phong");
         booking.setQuantity(body.getQuantity());
         booking.setRoomName(roomName.stream().map(RoomName::getName).collect(Collectors.toList()));
+
+        if(clientBk) booking.setBookingState(BookingState.AdminInit);
 
         booking.setTotalAmount();
         booking = bookingRepo.save(booking);
