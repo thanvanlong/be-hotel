@@ -106,12 +106,18 @@ public class StatsController {
         Cell cell = rowTime.createCell(0);
         cell.setCellValue("Ngày lập: " + LocalDateTime.now().toString());
         cell.setCellStyle(cellStyle);
-        writeHeaderForRevenue(sheet, 1, "Báo cáo doanh thu năm " + year);
+
+        rowTime = sheet.createRow( 1);
+        cell = rowTime.createCell(0);
+        cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
+        cell.setCellStyle(cellStyle);
+
+        writeHeaderForRevenue(sheet, 2, "Báo cáo doanh thu năm " + year);
 
         int sum = 0;
 
         // Thêm dữ liệu
-        Row dataRow = sheet.createRow(3);
+        Row dataRow = sheet.createRow(4);
         cell = dataRow.createCell(0);
         cell.setCellValue("Doanh thu");
 
@@ -123,8 +129,8 @@ public class StatsController {
             sum += revenues[i-1].getValue();
         }
 
-        dataRow = sheet.createRow(4);
-        sheet.addMergedRegion(new CellRangeAddress(4, 4, 0, 12));
+        dataRow = sheet.createRow(5);
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 0, 12));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + sum);
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -137,7 +143,7 @@ public class StatsController {
         cellStyleFormatNumber.setFont(font);
         cell.setCellStyle(cellStyleFormatNumber);
 
-        Row row = sheet.createRow(5);
+        Row row = sheet.createRow(6);
         cell = row.createCell(11);
         cell.setCellValue("Người lập báo cáo");
 
@@ -149,7 +155,7 @@ public class StatsController {
             user = userService.findByEmail((String) principal);
         }
 
-        row = sheet.createRow(6);
+        row = sheet.createRow(7);
         cell = row.createCell(11);
 
         cell.setCellStyle(cellStyle);
@@ -185,15 +191,21 @@ public class StatsController {
         Cell cell = rowTime.createCell(0);
         cell.setCellValue("Ngày lập: " + LocalDateTime.now().toString());
         cell.setCellStyle(cellStyle);
-        writeHeaderForRoom(sheet, 1, "Báo cáo doanh thu dịch vụ năm " + year);
 
-        Row dataRowH = sheet.createRow(2);
+        rowTime = sheet.createRow( 1);
+        cell = rowTime.createCell(0);
+        cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
+        cell.setCellStyle(cellStyle);
+
+        writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu dịch vụ năm " + year);
+
+        Row dataRowH = sheet.createRow(3);
         cell = dataRowH.createCell(0);
         cell.setCellValue("STT");
         cell.setCellStyle(cellStyle);
 
         cell = dataRowH.createCell(1);
-        cell.setCellValue("Loại phòng");
+        cell.setCellValue("Loại DV");
         cell.setCellStyle(cellStyle);
 
         cell = dataRowH.createCell(2);
@@ -210,29 +222,29 @@ public class StatsController {
 
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 2; i <= revenueByServiceExcels.size() + 1 ; i++) {
+        for(int i = 3; i <= revenueByServiceExcels.size() + 2 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
-            cell.setCellValue(i);
+            cell.setCellValue(i - 2);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByServiceExcels.get(i-2).getName());
+            cell.setCellValue(revenueByServiceExcels.get(i-3).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-2).getBookingCount());
+            cell.setCellValue(revenueByServiceExcels.get(i-3).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-2).getPrice());
+            cell.setCellValue(revenueByServiceExcels.get(i-3).getPrice());
 
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-2).getValue());
-            sum += revenueByServiceExcels.get(i-2).getValue();
+            cell.setCellValue(revenueByServiceExcels.get(i-3).getValue());
+            sum += revenueByServiceExcels.get(i-3).getValue();
         }
         Row dataRow = sheet.createRow(revenueByServiceExcels.size() + 4);
         sheet.addMergedRegion(new CellRangeAddress(revenueByServiceExcels.size() + 4, revenueByServiceExcels.size() + 4, 0, 4));
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + sum);
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -284,10 +296,14 @@ public class StatsController {
         cell.setCellValue("Ngày lập: " + LocalDateTime.now().toString());
         cell.setCellStyle(cellStyle);
 
+        rowTime = sheet.createRow( 1);
+        cell = rowTime.createCell(0);
+        cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
+        cell.setCellStyle(cellStyle);
 
-        writeHeaderForRoom(sheet, 1, "Báo cáo doanh thu phòng năm 2023");
+        writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu phòng năm " + year);
 
-        Row dataRowH = sheet.createRow(2);
+        Row dataRowH = sheet.createRow(3);
         cell = dataRowH.createCell(0);
         cell.setCellValue("STT");
         cell.setCellStyle(cellStyle);
@@ -310,28 +326,28 @@ public class StatsController {
 
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 2; i <= revenueByRoomExcels.size() + 1 ; i++) {
+        for(int i = 3; i <= revenueByRoomExcels.size() + 2 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
-            cell.setCellValue(i - 1);
+            cell.setCellValue(i - 2);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByRoomExcels.get(i-2).getName());
+            cell.setCellValue(revenueByRoomExcels.get(i-3).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-2).getBookingCount());
+            cell.setCellValue(revenueByRoomExcels.get(i-3).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-2).getPrice());
+            cell.setCellValue(revenueByRoomExcels.get(i-3).getPrice());
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-2).getValue());
-            sum += revenueByRoomExcels.get(i-2).getValue();
+            cell.setCellValue(revenueByRoomExcels.get(i-3).getValue());
+            sum += revenueByRoomExcels.get(i-3).getValue();
         }
         Row dataRow = sheet.createRow(revenueByRoomExcels.size() + 4);
         sheet.addMergedRegion(new CellRangeAddress(revenueByRoomExcels.size() + 4, revenueByRoomExcels.size() + 4, 0, 4));
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + sum);
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -825,7 +841,7 @@ public class StatsController {
         }
 
 
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, sizeMerge));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, sizeMerge));
 
     }
 
