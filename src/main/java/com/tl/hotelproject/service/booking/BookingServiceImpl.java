@@ -186,7 +186,7 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public String checkIn(String id) throws Exception{
         Booking booking = this.findById(id);
-        if(booking.getBookingState() == BookingState.Reject) throw new Exception("Khong da bi huy");
+        if(booking.getBookingState() == BookingState.Reject) throw new Exception("Phong da bi huy");
         if(booking.isCheckedIn()) return "ok";
         booking.setCheckedIn(true);
         bookingRepo.save(booking);

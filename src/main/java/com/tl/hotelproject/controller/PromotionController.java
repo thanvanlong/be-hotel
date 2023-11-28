@@ -83,7 +83,7 @@ public class PromotionController {
         }
         if(description != null) promotion.setDescription(description);
         if(startDate != null) promotion.setStartDate(startDate);
-        if(endDate != null) promotion.setStartDate(endDate);
+        if(endDate != null) promotion.setEndDate(endDate);
         if(state != null) promotion.setState(state);
         if(discount!= null) promotion.setDiscount(discount);
         if(file != null) promotion.setImage(CloudinaryUtils.uploadImg(file.getBytes(), StringUtils.uuidFileName(promotion.getName())));
