@@ -102,7 +102,7 @@ public class BookingServiceImpl implements BookingService{
         booking.setQuantity(body.getQuantity());
         booking.setRoomName(roomName.stream().map(RoomName::getName).collect(Collectors.toList()));
 
-        if(clientBk) booking.setBookingState(BookingState.AdminInit);
+        if(!clientBk) booking.setBookingState(BookingState.AdminInit);
 
         booking.setTotalAmount();
         booking = bookingRepo.save(booking);
