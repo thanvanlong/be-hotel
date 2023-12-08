@@ -53,6 +53,12 @@ public class PromotionController {
                                                     @RequestParam(value = "state", required = false, defaultValue = "Inactive") State state,
                                                     @RequestParam(value = "discount") Integer discount,
                                                     @RequestParam(name = "file", required = false) MultipartFile file) throws Exception{
+
+        boolean checkStartDate = this.promotionService.checkPromotionByStartDateAndEndDate(startDate, "");
+        boolean checkEndDate = this.promotionService.checkPromotionByStartDateAndEndDate(endDate, "");
+
+        if(!checkStartDate || !checkEndDate) throw new Exception("Khong the them khuyen mai trung thoi gian");
+
         Promotion promotion = new Promotion();
         promotion.setName(name);
         promotion.setStartDate(startDate);
@@ -77,6 +83,11 @@ public class PromotionController {
             @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         Promotion promotion = promotionService.getById(id);
+        boolean checkStartDate = this.promotionService.checkPromotionByStartDateAndEndDate(startDate, promotion.getId());
+        boolean checkEndDate = this.promotionService.checkPromotionByStartDateAndEndDate(endDate, promotion.getId());
+
+        if(!checkStartDate || !checkEndDate) throw new Exception("Khong the them khuyen mai trung thoi gian");
+
         if(name != null) {
             promotion.setName(name);
             promotion.setSlug();

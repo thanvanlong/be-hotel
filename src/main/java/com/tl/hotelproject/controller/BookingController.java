@@ -10,6 +10,7 @@ import com.tl.hotelproject.dtos.booking.AddBookingDto;
 import com.tl.hotelproject.dtos.booking.UpdateUsedServicesDto;
 import com.tl.hotelproject.entity.ResponseDTO;
 import com.tl.hotelproject.entity.booking.Booking;
+import com.tl.hotelproject.entity.booking.BookingState;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import com.tl.hotelproject.entity.services.UsedServices;
 import com.tl.hotelproject.repo.BookingRepo;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("api/v1/booking")
@@ -53,9 +55,13 @@ public class BookingController {
     public ResponseEntity<byte[]> downloadPDF(@RequestParam("id") String id) throws Exception {
         Booking booking = this.bookingService.findById(id);
         booking.setTotalAmount();
-
         bookingRepo.save(booking);
 
+        if(booking.getBookingState() == BookingState.Done || booking.isCheckedIn()
+                || booking.getBookingState() == BookingState.Success || booking.getBookingState() == BookingState.AdminInit) {
+
+        }
+        else throw new Exception("Khong the xuat bill nay!");
         List<UsedServices> services = booking.getUsedServices();
         if(services != null) {
             for (UsedServices service : services) {
@@ -66,11 +72,15 @@ public class BookingController {
         Map<String, Object> body = new HashMap<>();
         body.put("roomName", StringUtils.removeAccents(booking.getRoom().getName()));
         body.put("quantity", booking.getQuantity());
-        body.put("price", booking.getPrice() * booking.getQuantity());
+        body.put("price", booking.getPrice());
         body.put("id", booking.getId());
+        body.put("checkin", booking.getCheckin());
+        body.put("checkout", booking.getCheckout());
+        body.put("discount", booking.getSelloff());
+        body.put("spent", TimeUnit.DAYS.convert(booking.getCheckout().getTime() - booking.getCheckin().getTime(), TimeUnit.MILLISECONDS));
         body.put("createdDate", new Date().toString());
         body.put("paymentDate", booking.getCreatedAt().toString());
-        body.put("s", services == null ? false : true);
+        body.put("s", services != null);
         body.put("services", services);
         body.put("totalAmount", booking.getTotalAmount());
 

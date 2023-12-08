@@ -108,20 +108,23 @@
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="1">
         <tr class="top">
-            <td colspan="3">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td class="title">
                             <img
-                                    src="https://sparksuite.github.io/simple-html-invoice-template/images/logo.png"
-                                    style="width: 100%; max-width: 300px"
+                                    src="https://content.cdntwrk.com/files/aHViPTEwMzAxMyZjbWQ9aXRlbWVkaXRvcmltYWdlJmZpbGVuYW1lPWl0ZW1lZGl0b3JpbWFnZV82MzQ1YTExNWNkYzVkLnBuZyZ2ZXJzaW9uPTAwMDAmc2lnPTkyOTQ4M2I5Mzc2NmZmYTA2YWIwMmEyYTg0ZmEzMTgx"
+                                    style="width: 100%; max-width: 200px"
                             />
                         </td>
 
                         <td>
                             Invoice: ${id}<br />
                             Created: ${createdDate}<br />
-                            Payment At: ${paymentDate}
+                            Payment At: ${paymentDate}<br />
+                            Checkin At: ${checkin}<br />
+                            Checkout At: ${checkout} <br />
+                            Discount: ${discount} %
                         </td>
                     </tr>
                 </table>
@@ -129,16 +132,16 @@
         </tr>
 
         <tr class="information">
-            <td colspan="3">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td>
+                            Khach san Thanh son<br />
                             047A Xuan Vien, Phuong Sa Pa<br />
                             Thi xa Sa Pa, Tinh Lao Cai, Viet Nam
                         </td>
 
                         <td>
-                            Khach san Thanh son<br />
                             Nguyen Thi Thuy Linh<br />
                             admin@example.com
                         </td>
@@ -150,18 +153,21 @@
         <tr class="heading">
             <td>Room</td>
             <td style="text-align: center">Quantity</td>
+            <td style="text-align: center">Days spent</td>
             <td style="text-align: center">Price</td>
         </tr>
 
         <tr class="details">
             <td>${roomName}</td>
             <td style="text-align: center">${quantity}</td>
+            <td style="text-align: center">${spent} days</td>
             <td style="text-align: center">${price} VND</td>
         </tr>
 
-        <#if s>
+        <#if s=true>
             <tr class="heading">
                 <td>Service</td>
+                <td></td>
                 <td style="text-align: center">Quantity</td>
                 <td style="text-align: center">Price</td>
             </tr>
@@ -170,12 +176,14 @@
         <#list services as service>
             <tr class="item">
                 <td>${service.name}</td>
+                <td></td>
                 <td style="text-align: center">${service.quantity}</td>
                 <td style="text-align: center">${service.price} VND</td>
             </tr>
         </#list>
 
         <tr class="total">
+            <td></td>
             <td></td>
             <td></td>
             <td style="text-align: end;">Total: ${totalAmount} VND</td>

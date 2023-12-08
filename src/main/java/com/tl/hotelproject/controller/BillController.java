@@ -38,6 +38,7 @@ public class BillController {
         if(code.equals("00")) {
             this.billService.fulfilledBill(vnp_TxnRef);
             response.sendRedirect("http://localhost:5174/thank/success");
+            return;
         }
 
         this.billService.rejectBill(vnp_TxnRef, code);

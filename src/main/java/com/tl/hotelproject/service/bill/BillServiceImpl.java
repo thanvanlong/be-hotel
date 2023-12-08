@@ -119,6 +119,9 @@ public class BillServiceImpl implements BillService{
         body.put("quantity", booking.getQuantity());
         body.put("price", booking.getPrice() * booking.getQuantity());
         body.put("id", booking.getId());
+        body.put("checkin", booking.getCheckin());
+        body.put("checkout", booking.getCheckout());
+        body.put("discount", booking.getSelloff());
         body.put("createdDate", new Date().getTime());
         body.put("paymentDate", new Date().getTime());
         body.put("s", false);
@@ -149,6 +152,9 @@ public class BillServiceImpl implements BillService{
         body.put("id", booking.getId());
         body.put("createdDate", new Date().getTime());
         body.put("paymentDate", new Date().getTime());
+        body.put("checkin", booking.getCheckin());
+        body.put("checkout", booking.getCheckout());
+        body.put("discount", booking.getSelloff());
         body.put("s", false);
         body.put("services", new ArrayList<>());
         body.put("totalAmount", bill.getTotalAmount());

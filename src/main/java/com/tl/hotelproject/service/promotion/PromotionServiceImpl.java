@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -86,5 +87,12 @@ public class PromotionServiceImpl implements PromotionService{
     @Override
     public Promotion getPromotionByStartDateAndEndDate() {
         return promotionRepo.findAllByStartDateIsBeforeAndEndDateIsAfter(LocalDate.now().plusDays(1), LocalDate.now().plusDays(1));
+    }
+
+    @Override
+    public Boolean checkPromotionByStartDateAndEndDate(LocalDate date, String id) {
+        Promotion promotion = promotionRepo.findByDate(date);
+        if(id != "") promotion = promotionRepo.findByDateNotId(date, id);
+        return promotion == null;
     }
 }

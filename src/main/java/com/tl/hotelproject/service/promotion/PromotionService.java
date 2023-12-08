@@ -3,6 +3,8 @@ package com.tl.hotelproject.service.promotion;
 import com.tl.hotelproject.entity.promotion.Promotion;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -18,4 +20,6 @@ public interface PromotionService {
     Map<String, Object> search(int page, int limit, String search);
 
     Promotion getPromotionByStartDateAndEndDate();
+
+    Boolean checkPromotionByStartDateAndEndDate(LocalDate date, String id);
 }

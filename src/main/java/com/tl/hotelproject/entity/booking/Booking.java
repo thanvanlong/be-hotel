@@ -67,12 +67,11 @@ public class Booking extends CommonObjectDTO {
         // Tính số ngày giữa checkin và checkout
         long diffInMillies = Math.abs(checkout.getTime() - checkin.getTime());
         long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
         int totalAmount = 0;
         if(usedServices != null) totalAmount = usedServices.stream()
                 .map(x -> x.getPrice() * x.getQuantity())
                 .reduce(0, Integer::sum);
 
-        this.totalAmount = totalAmount + this.quantity * this.price * (int)diffInDays;
+        this.totalAmount = totalAmount + (this.quantity * (int)(this.price - this.price * this.selloff)* (int)diffInDays);
     }
 }
