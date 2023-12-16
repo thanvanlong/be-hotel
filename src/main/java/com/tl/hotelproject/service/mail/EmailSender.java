@@ -87,7 +87,7 @@ public class EmailSender implements EmailService {
             mimeMessageHelper.setText(Objects.equals(html, "")? initContent(body,filename) : html,true);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setFrom("longthan366@gmail.com");
+            mimeMessageHelper.setFrom("linhntt5922@gmail.com");
             mailSender.send(message);
         }catch(MessagingException e){
             throw new IllegalStateException("Fail to send email");
