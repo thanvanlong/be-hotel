@@ -23,9 +23,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Data
@@ -95,6 +97,18 @@ public class StatsController {
     @Autowired
     private UserService userService;
 
+    private static String formatCurrency(long number) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        return numberFormat.format(number);
+    }
+
+    private static String formatDate() {
+        LocalDate currentDate = LocalDate.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'Hà Nội, Ngày' dd 'Tháng' MM 'Năm' yyyy", new Locale("vi"));
+        return currentDate.format(formatter);
+    }
+
     @GetMapping("/export-excel-revenue")
     public void exportExcel(@RequestParam("year") int year, HttpServletResponse response) throws IOException {
         Revenue[] revenues = this.revenueMonth(year);
@@ -102,6 +116,7 @@ public class StatsController {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Revenue " + year);
         CellStyle cellStyle = createCellStyle(sheet, workbook);
+        CellStyle cellStyleDate = createCellStyleDate(sheet, workbook);
         Row rowTime = sheet.createRow( 0);
         Cell cell = rowTime.createCell(0);
         cell.setCellValue("Ngày lập: " + LocalDateTime.now().toString());
@@ -132,7 +147,7 @@ public class StatsController {
         dataRow = sheet.createRow(5);
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 0, 12));
         cell = dataRow.createCell(0);
-        cell.setCellValue("Tổng cộng: " + sum);
+        cell.setCellValue("Tổng cộng: " + formatCurrency(sum) + " VND");
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
 
         Font font = sheet.getWorkbook().createFont();
@@ -145,20 +160,24 @@ public class StatsController {
 
         Row row = sheet.createRow(6);
         cell = row.createCell(11);
-        cell.setCellValue("Người lập báo cáo");
+        cell.setCellStyle(cellStyleDate);
+        cell.setCellValue(formatDate());
 
-        cell.setCellStyle(cellStyleFormatNumber);
+        row = sheet.createRow(7);
+        cell = row.createCell(11);
+        cell.setCellValue("Người lập báo cáo");
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
+
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(principal);
         User user = null;
         if (principal instanceof String && !((String) principal).isEmpty()) {
             user = userService.findByEmail((String) principal);
         }
 
-        row = sheet.createRow(7);
+        row = sheet.createRow(8);
         cell = row.createCell(11);
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
 
-        cell.setCellStyle(cellStyle);
         if (user != null) {
             cell.setCellValue(user.getName());
         } else {
@@ -166,7 +185,7 @@ public class StatsController {
         }
 
         //Create CellStyle
-        cell.setCellStyle(cellStyleFormatNumber);
+//        cell.setCellStyle(cellStyleFormatNumber);
         autosizeColumn(sheet, 12);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -197,32 +216,12 @@ public class StatsController {
         cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
         cell.setCellStyle(cellStyle);
 
-        writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu dịch vụ năm " + year);
-
-        Row dataRowH = sheet.createRow(3);
-        cell = dataRowH.createCell(0);
-        cell.setCellValue("STT");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(1);
-        cell.setCellValue("Loại DV");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(2);
-        cell.setCellValue("Số lần thuê");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(3);
-        cell.setCellValue("Đơn giá");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(4);
-        cell.setCellValue("Doanh thu");
-        cell.setCellStyle(cellStyle);
+        writeHeaderForService(sheet, 2, "Báo cáo doanh thu dịch vụ năm " + year);
 
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 3; i <= revenueByServiceExcels.size() + 2 ; i++) {
+        int i = 3;
+        for(i = 3; i <= revenueByServiceExcels.size() + 2 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
             cell.setCellValue(i - 2);
@@ -246,7 +245,7 @@ public class StatsController {
         sheet.addMergedRegion(new CellRangeAddress(revenueByServiceExcels.size() + 4, revenueByServiceExcels.size() + 4, 0, 4));
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
         cell = dataRow.createCell(0);
-        cell.setCellValue("Tổng cộng: " + sum);
+        cell.setCellValue("Tổng cộng: " + formatCurrency(sum) + " VND");
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
 
         Font font = sheet.getWorkbook().createFont();
@@ -269,9 +268,41 @@ public class StatsController {
             sheet.setDefaultRowHeight((short) 450);
         }
 
+        dataRow = sheet.createRow(i+2);
+        cell = dataRow.createCell(3);
+        CellStyle style = createCellStyleDate(sheet, workbook);
 
+        cell.setCellStyle(style);
+        cell.setCellValue(formatDate());
 
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+        dataRow = sheet.createRow(i+3);
+        cell = dataRow.createCell(3);
+        cell.setCellValue("Người lập báo cáo");
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = null;
+        if (principal instanceof String && !((String) principal).isEmpty()) {
+            user = userService.findByEmail((String) principal);
+        }
+
+        dataRow = sheet.createRow(i + 4);
+        cell = dataRow.createCell(3);
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
+
+        if (user != null) {
+            cell.setCellValue(user.getName());
+        } else {
+            cell.setCellValue("Nguyễn Thị Thùy Linh");
+        }
+
+        //Create CellStyle
+//        cell.setCellStyle(cellStyleFormatNumber);
+//        autosizeColumn(sheet, 12);
+
+//        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+//        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=revenue-service.xlsx");
@@ -303,30 +334,10 @@ public class StatsController {
 
         writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu phòng năm " + year);
 
-        Row dataRowH = sheet.createRow(3);
-        cell = dataRowH.createCell(0);
-        cell.setCellValue("STT");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(1);
-        cell.setCellValue("Loại phòng");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(2);
-        cell.setCellValue("Số lần thuê");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(3);
-        cell.setCellValue("Đơn giá");
-        cell.setCellStyle(cellStyle);
-
-        cell = dataRowH.createCell(4);
-        cell.setCellValue("Doanh thu");
-        cell.setCellStyle(cellStyle);
-
         long sum = 0;
         // Thêm dữ liệu
-        for(int i = 3; i <= revenueByRoomExcels.size() + 2 ; i++) {
+        int i = 3;
+        for(i = 3; i <= revenueByRoomExcels.size() + 2 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
             cell.setCellValue(i - 2);
@@ -349,7 +360,7 @@ public class StatsController {
         sheet.addMergedRegion(new CellRangeAddress(revenueByRoomExcels.size() + 4, revenueByRoomExcels.size() + 4, 0, 4));
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
         cell = dataRow.createCell(0);
-        cell.setCellValue("Tổng cộng: " + sum);
+        cell.setCellValue("Tổng cộng: " + formatCurrency(sum) + " VND");
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
 
         Font font = sheet.getWorkbook().createFont();
@@ -372,8 +383,36 @@ public class StatsController {
             sheet.setDefaultRowHeight((short) 450);
         }
 
+        dataRow = sheet.createRow(i+2);
+        cell = dataRow.createCell(3);
+        CellStyle style = createCellStyleDate(sheet, workbook);
 
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+        cell.setCellStyle(style);
+        cell.setCellValue(formatDate());
+
+        dataRow = sheet.createRow(i+3);
+        cell = dataRow.createCell(3);
+        cell.setCellValue("Người lập báo cáo");
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = null;
+        if (principal instanceof String && !((String) principal).isEmpty()) {
+            user = userService.findByEmail((String) principal);
+        }
+
+        dataRow = sheet.createRow(i + 4);
+        cell = dataRow.createCell(3);
+        cell.setCellStyle(createCellStyleBC(sheet, workbook));
+
+        if (user != null) {
+            cell.setCellValue(user.getName());
+        } else {
+            cell.setCellValue("Nguyễn Thị Thùy Linh");
+        }
+
+//        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=revenue-room.xlsx");
@@ -767,6 +806,52 @@ public class StatsController {
         cell.setCellValue("Tháng 12");
     }
 
+    private static void writeHeaderForService(Sheet sheet, int rowIndex, String header) {
+        // create CellStyle
+        CellStyle cellStyle = createStyleForHeader(sheet);
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 15); // font size
+
+        CellStyle cellStyle1 = sheet.getWorkbook().createCellStyle();
+        cellStyle1.setFont(font);
+        cellStyle1.setBorderBottom(BorderStyle.THIN);
+        cellStyle1.setBorderLeft(BorderStyle.THIN);
+        cellStyle1.setBorderRight(BorderStyle.THIN);
+        cellStyle1.setBorderTop(BorderStyle.THIN);
+
+        Row row1 = sheet.createRow(rowIndex);
+        row1.setHeight((short) 550);
+        Cell cell2 = row1.createCell(0);
+        cell2.setCellValue(header.toUpperCase());
+        cellStyle1.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);
+        cell2.setCellStyle(cellStyle1);
+
+        Row row = sheet.createRow(rowIndex + 1);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("STT");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("Loại DV");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("Số lần thuê");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("Đơn giá");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue("Doanh thu");
+        cell.setCellStyle(cellStyle);
+
+    }
+
     private static void writeHeaderForRoom(Sheet sheet, int rowIndex, String header) {
         // create CellStyle
         CellStyle cellStyle = createStyleForHeader(sheet);
@@ -781,6 +866,7 @@ public class StatsController {
         cellStyle1.setBorderLeft(BorderStyle.THIN);
         cellStyle1.setBorderRight(BorderStyle.THIN);
         cellStyle1.setBorderTop(BorderStyle.THIN);
+
         Row row1 = sheet.createRow(rowIndex);
         row1.setHeight((short) 550);
         Cell cell2 = row1.createCell(0);
@@ -788,27 +874,28 @@ public class StatsController {
         cellStyle1.setAlignment(HorizontalAlignment.CENTER);
         cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);
         cell2.setCellStyle(cellStyle1);
-        Row row = sheet.createRow(rowIndex + 2);
 
+        Row row = sheet.createRow(rowIndex + 1);
         Cell cell = row.createCell(0);
-        cell.setCellStyle(cellStyle);
         cell.setCellValue("STT");
+        cell.setCellStyle(cellStyle);
 
         cell = row.createCell(1);
+        cell.setCellValue("Loại phòng");
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Tên");
 
         cell = row.createCell(2);
+        cell.setCellValue("Số lần thuê");
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Mô tả");
 
         cell = row.createCell(3);
+        cell.setCellValue("Đơn giá");
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Ngày tạo");
 
         cell = row.createCell(4);
-        cell.setCellStyle(cellStyle);
         cell.setCellValue("Doanh thu");
+        cell.setCellStyle(cellStyle);
+
     }
 
     private static CellStyle createStyleForHeader(Sheet sheet) {
@@ -826,6 +913,10 @@ public class StatsController {
         cellStyle.setBorderLeft(BorderStyle.THIN);
         cellStyle.setBorderRight(BorderStyle.THIN);
         cellStyle.setBorderTop(BorderStyle.THIN);
+
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
         return cellStyle;
     }
 
@@ -866,4 +957,38 @@ public class StatsController {
         return cellStyleFormatNumber;
     }
 
+    private CellStyle createCellStyleDate(Sheet sheet, Workbook workbook) {
+        short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
+
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setFontHeightInPoints((short) 14); // font size
+        font.setItalic(true);
+
+        //Create CellStyle
+        CellStyle cellStyleFormatNumber = workbook.createCellStyle();
+        cellStyleFormatNumber.setDataFormat(format);
+        cellStyleFormatNumber.setFont(font);
+        cellStyleFormatNumber.setAlignment(HorizontalAlignment.CENTER);
+        cellStyleFormatNumber.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        return cellStyleFormatNumber;
+    }
+
+    private CellStyle createCellStyleBC(Sheet sheet, Workbook workbook) {
+        short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
+
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setFontHeightInPoints((short) 13); // font size
+
+        //Create CellStyle
+        CellStyle cellStyleFormatNumber = workbook.createCellStyle();
+        cellStyleFormatNumber.setDataFormat(format);
+        cellStyleFormatNumber.setFont(font);
+        cellStyleFormatNumber.setAlignment(HorizontalAlignment.CENTER);
+        cellStyleFormatNumber.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        return cellStyleFormatNumber;
+    }
 }
