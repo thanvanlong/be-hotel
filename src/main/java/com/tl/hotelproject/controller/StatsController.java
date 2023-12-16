@@ -196,12 +196,16 @@ public class StatsController {
     }
 
     @GetMapping("/export-excel-service")
-    public void exportExcelService(@RequestParam("year") int year,
-                                   @RequestParam(value = "month", defaultValue = "0") int month,
-                                   @RequestParam(value = "day", defaultValue = "0") int day,
+    public void exportExcelService( @RequestParam("startDate") String startDate,
+                                    @RequestParam("endDate") String endDate,
                                    HttpServletResponse response) throws Exception {
 
-        List<RevenueByServiceExcel> revenueByServiceExcels = this.statsService(year, month, day);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+        Date start = dateFormat.parse(startDate);
+        Date end = dateFormat.parse(endDate);
+
+        List<RevenueByServiceExcel> revenueByServiceExcels = this.statsService(start, end);
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Revenue Service");
@@ -216,34 +220,37 @@ public class StatsController {
         cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
         cell.setCellStyle(cellStyle);
 
-        writeHeaderForService(sheet, 2, "Báo cáo doanh thu dịch vụ năm " + year);
+        writeHeaderForService(sheet, 2, "Báo cáo doanh thu dịch vụ");
+
+        writeSubHeader(sheet, 3,"Từ ngày "+ startDate + " đến ngày " + endDate);
 
         long sum = 0;
         // Thêm dữ liệu
-        int i = 3;
-        for(i = 3; i <= revenueByServiceExcels.size() + 2 ; i++) {
+        int i = 4;
+        for(i = 4; i <= revenueByServiceExcels.size() + 3 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
-            cell.setCellValue(i - 2);
+            cell.setCellValue(i - 3);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByServiceExcels.get(i-3).getName());
+            cell.setCellValue(revenueByServiceExcels.get(i-4).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-3).getBookingCount());
+            cell.setCellValue(revenueByServiceExcels.get(i-4).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-3).getPrice());
+            cell.setCellValue(revenueByServiceExcels.get(i-4).getPrice());
 
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByServiceExcels.get(i-3).getValue());
-            sum += revenueByServiceExcels.get(i-3).getValue();
+            cell.setCellValue(revenueByServiceExcels.get(i-4).getValue());
+            sum += revenueByServiceExcels.get(i-4).getValue();
         }
-        Row dataRow = sheet.createRow(revenueByServiceExcels.size() + 4);
-        sheet.addMergedRegion(new CellRangeAddress(revenueByServiceExcels.size() + 4, revenueByServiceExcels.size() + 4, 0, 4));
+        Row dataRow = sheet.createRow(i+1);
+        sheet.addMergedRegion(new CellRangeAddress(i+1, i+1, 0, 4));
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
+        sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 4));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + formatCurrency(sum) + " VND");
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -312,12 +319,15 @@ public class StatsController {
     }
 
     @GetMapping("/export-excel-room")
-    public void exportExcelRoom(@RequestParam("year") int year,
-                                   @RequestParam(value = "month", defaultValue = "0") int month,
-                                   @RequestParam(value = "day", defaultValue = "0") int day,
+    public void exportExcelRoom( @RequestParam("startDate") String startDate,
+                                 @RequestParam("endDate") String endDate,
                                    HttpServletResponse response) throws Exception {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        List<RoomStatsExcel> revenueByRoomExcels = this.statsRoom(year, month, day);
+        Date start = dateFormat.parse(startDate);
+        Date end = dateFormat.parse(endDate);
+
+        List<RoomStatsExcel> revenueByRoomExcels = this.statsRoom(start, end);
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Revenue Room");
@@ -332,33 +342,35 @@ public class StatsController {
         cell.setCellValue("Khách sạn Thanh Sơn - Đc: 047A Xuân Viên P.SaPa TX. Sa Pa");
         cell.setCellStyle(cellStyle);
 
-        writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu phòng năm " + year);
+        writeHeaderForRoom(sheet, 2, "Báo cáo doanh thu phòng");
+        writeSubHeader(sheet, 3,"Từ ngày "+ startDate + " đến ngày " + endDate);
 
         long sum = 0;
         // Thêm dữ liệu
-        int i = 3;
-        for(i = 3; i <= revenueByRoomExcels.size() + 2 ; i++) {
+        int i = 4;
+        for(i = 4; i <= revenueByRoomExcels.size() + 3 ; i++) {
             Row dataRow = sheet.createRow(i + 1);
             cell = dataRow.createCell(0);
-            cell.setCellValue(i - 2);
+            cell.setCellValue(i - 3);
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(1);
-            cell.setCellValue(revenueByRoomExcels.get(i-3).getName());
+            cell.setCellValue(revenueByRoomExcels.get(i-4).getName());
             cell.setCellStyle(cellStyle);
             cell = dataRow.createCell(2);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-3).getBookingCount());
+            cell.setCellValue(revenueByRoomExcels.get(i-4).getBookingCount());
             cell = dataRow.createCell(3);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-3).getPrice());
+            cell.setCellValue(revenueByRoomExcels.get(i-4).getPrice());
             cell = dataRow.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(revenueByRoomExcels.get(i-3).getValue());
-            sum += revenueByRoomExcels.get(i-3).getValue();
+            cell.setCellValue(revenueByRoomExcels.get(i-4).getValue());
+            sum += revenueByRoomExcels.get(i-4).getValue();
         }
-        Row dataRow = sheet.createRow(revenueByRoomExcels.size() + 4);
-        sheet.addMergedRegion(new CellRangeAddress(revenueByRoomExcels.size() + 4, revenueByRoomExcels.size() + 4, 0, 4));
+        Row dataRow = sheet.createRow(i+ 1);
+        sheet.addMergedRegion(new CellRangeAddress(i+1, i+1, 0, 4));
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 4));
+        sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 4));
         cell = dataRow.createCell(0);
         cell.setCellValue("Tổng cộng: " + formatCurrency(sum) + " VND");
         short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
@@ -423,19 +435,15 @@ public class StatsController {
 
     @GetMapping("stats-rooms")
     public ResponseEntity<ResponseDTO<List<RoomStats>>> statsRooms(
-            @RequestParam("year") int year,
-            @RequestParam(value = "month", required = false) Integer month,
-            @RequestParam(value = "day", required = false) Integer day
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate
     ) throws Exception{
-        List<Object[]> result;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        if(day != null) {
-            if(month == null) throw new Exception("du lieu khong dung");
-            result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
-        }
+        Date start = dateFormat.parse(startDate);
+        Date end = dateFormat.parse(endDate);
 
-        else if(month != null) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
-        else result = bookingRepo.calculateRoomRevenueAndBookings(year);
+        List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(start, end);
 
         List<Object[]> roomList = roomRepo.listRoomSelect();
 
@@ -556,22 +564,26 @@ public class StatsController {
 
     @GetMapping("stats-service")
     public ResponseEntity<ResponseDTO<List<RevenueByService>>> revenueByService(
-            @RequestParam("year") int year,
-            @RequestParam(value = "month", required = false) Integer month,
-            @RequestParam(value = "day", required = false) Integer day
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate
     ) throws Exception{
-        List<Object[]> result;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        if(day != null) {
-            if(month == null) throw new Exception("Du lieu dinh dang ko dung");
+        Date start = dateFormat.parse(startDate);
+        Date end = dateFormat.parse(endDate);
 
-            result = bookingRepo.calculateRevenueByService(year, month, day);
+        List<Object[]> result = bookingRepo.calculateRevenueByService(start, end);
 
-        }
-        else if(month != null){
-            result = bookingRepo.calculateRevenueByService(year, month);
-        }
-        else result = bookingRepo.calculateRevenueByService(year);
+//        if(day != null) {
+//            if(month == null) throw new Exception("Du lieu dinh dang ko dung");
+//
+//            result = bookingRepo.calculateRevenueByService(year, month, day);
+//
+//        }
+//        else if(month != null){
+//            result = bookingRepo.calculateRevenueByService(year, month);
+//        }
+//        else result = bookingRepo.calculateRevenueByService(year);
 
 
         List<Object[]> serviceList = servicesRepo.listServiceSelect();
@@ -629,19 +641,8 @@ public class StatsController {
         return revenues;
     }
 
-    private List<RevenueByServiceExcel> statsService(int year, int month, int day) throws Exception{
-        List<Object[]> result;
-
-        if(day != 0) {
-            if(month == 0) throw new Exception("Du lieu dinh dang ko dung");
-
-            result = bookingRepo.calculateRevenueByService(year, month, day);
-
-        }
-        else if(month != 0){
-            result = bookingRepo.calculateRevenueByService(year, month);
-        }
-        else result = bookingRepo.calculateRevenueByService(year);
+    private List<RevenueByServiceExcel> statsService(Date startDate, Date endDate) throws Exception{
+        List<Object[]> result = bookingRepo.calculateRevenueByService(startDate, endDate);
 
 
         List<Object[]> serviceList = servicesRepo.listServiceSelect();
@@ -682,15 +683,8 @@ public class StatsController {
         return revenueList;
     }
 
-    private List<RoomStatsExcel> statsRoom(int year, int month, int day) throws Exception{
-        List<Object[]> result;
-        if(day != 0) {
-            if(month == 0) throw new Exception("du lieu khong dung");
-            result = bookingRepo.calculateRoomRevenueAndBookings(year, month, day);
-        }
-
-        else if(month != 0) result = bookingRepo.calculateRoomRevenueAndBookings(year, month);
-        else result = bookingRepo.calculateRoomRevenueAndBookings(year);
+    private List<RoomStatsExcel> statsRoom(Date startDate, Date endDate) throws Exception{
+        List<Object[]> result = bookingRepo.calculateRoomRevenueAndBookings(startDate, endDate);
 
         List<Object[]> roomList = roomRepo.listRoomSelect();
 
@@ -829,7 +823,7 @@ public class StatsController {
         cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);
         cell2.setCellStyle(cellStyle1);
 
-        Row row = sheet.createRow(rowIndex + 1);
+        Row row = sheet.createRow(rowIndex + 2);
         Cell cell = row.createCell(0);
         cell.setCellValue("STT");
         cell.setCellStyle(cellStyle);
@@ -850,6 +844,30 @@ public class StatsController {
         cell.setCellValue("Doanh thu");
         cell.setCellStyle(cellStyle);
 
+    }
+
+    private static void writeSubHeader(Sheet sheet, int rowIndex, String header) {
+        // create CellStyle
+        CellStyle cellStyle = createStyleForHeader(sheet);
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setItalic(true);
+        font.setFontHeightInPoints((short) 12); // font size
+
+        CellStyle cellStyle1 = sheet.getWorkbook().createCellStyle();
+        cellStyle1.setFont(font);
+//        cellStyle1.setBorderBottom(BorderStyle.THIN);
+//        cellStyle1.setBorderLeft(BorderStyle.THIN);
+//        cellStyle1.setBorderRight(BorderStyle.THIN);
+//        cellStyle1.setBorderTop(BorderStyle.THIN);
+
+        Row row1 = sheet.createRow(rowIndex);
+        row1.setHeight((short) 550);
+        Cell cell2 = row1.createCell(0);
+        cell2.setCellValue(header);
+        cellStyle1.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);
+        cell2.setCellStyle(cellStyle1);
     }
 
     private static void writeHeaderForRoom(Sheet sheet, int rowIndex, String header) {
@@ -875,7 +893,7 @@ public class StatsController {
         cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);
         cell2.setCellStyle(cellStyle1);
 
-        Row row = sheet.createRow(rowIndex + 1);
+        Row row = sheet.createRow(rowIndex + 2);
         Cell cell = row.createCell(0);
         cell.setCellValue("STT");
         cell.setCellStyle(cellStyle);
@@ -962,7 +980,7 @@ public class StatsController {
 
         Font font = sheet.getWorkbook().createFont();
         font.setFontName("Times New Roman");
-        font.setFontHeightInPoints((short) 14); // font size
+        font.setFontHeightInPoints((short) 12); // font size
         font.setItalic(true);
 
         //Create CellStyle

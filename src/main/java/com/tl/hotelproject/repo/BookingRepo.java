@@ -13,8 +13,8 @@ import java.util.List;
 
 @Repository
 public interface BookingRepo extends JpaRepository<Booking, String> {
-    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.room WHERE b.id = :bookingId")
-    Booking getBookingWithRelationship(@Param("bookingId") String bookingId);
+//    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.room WHERE b.id = :bookingId")
+//    Booking getBookingWithRelationship(@Param("bookingId") String bookingId);
 
     @Query("SELECT b  FROM Booking b" +
 //            " LEFT JOIN FETCH b.user LEFT JOIN FETCH b.usedServices " +
@@ -37,53 +37,66 @@ public interface BookingRepo extends JpaRepository<Booking, String> {
             "GROUP BY MONTH(b.createdAt)")
     List<Object[]> calculateRevenueByMonth(int year);
 
-    @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100)  " +
-            "FROM Booking b " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
-            "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
-    List<Object[]> calculateRoomRevenueAndBookings(int year);
+//    @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100)  " +
+//            "FROM Booking b " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
+//    List<Object[]> calculateRoomRevenueAndBookings(int year);
+//
+//    @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100) " +
+//            "FROM Booking b " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "and MONTH(b.createdAt) = :month "+
+//            "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
+//    List<Object[]> calculateRoomRevenueAndBookings(int year, int month);
+//
+//    @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100) " +
+//            "FROM Booking b " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
+//            "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
+//    List<Object[]> calculateRoomRevenueAndBookings(int year, int month, int day);
 
     @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100) " +
             "FROM Booking b " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
-            "and MONTH(b.createdAt) = :month "+
+            "where (b.bookingState = 2 OR b.bookingState = 3) AND b.createdAt BETWEEN :startDate AND :endDate " +
             "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
-    List<Object[]> calculateRoomRevenueAndBookings(int year, int month);
+    List<Object[]> calculateRoomRevenueAndBookings(Date startDate, Date endDate);
 
-    @Query("SELECT b.room.id, b.room.name, SUM(b.quantity * (b.price - b.price * b.selloff / 100)), SUM(b.quantity), (b.price - b.price * b.selloff / 100) " +
-            "FROM Booking b " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
-            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
-            "GROUP BY b.room.id, b.room.name, b.quantity, b.price, b.selloff")
-    List<Object[]> calculateRoomRevenueAndBookings(int year, int month, int day);
-
-    @Query("SELECT b FROM Booking b WHERE b.createdAt >= :sevenDaysAgo AND b.createdAt <= :currentDate")
-    List<Object> findDataWithin7Days(@Param("sevenDaysAgo") Date sevenDaysAgo, @Param("currentDate") Date currentDate);
-
-    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b)  FROM Booking b WHERE b.createdAt = :date " +
-            "GROUP BY b.room.id, b.room.name")
-    List<Object[]> findDataForDate(@Param("date") Date date);
+//    @Query("SELECT b FROM Booking b WHERE b.createdAt >= :sevenDaysAgo AND b.createdAt <= :currentDate")
+//    List<Object> findDataWithin7Days(@Param("sevenDaysAgo") Date sevenDaysAgo, @Param("currentDate") Date currentDate);
+//
+//    @Query("SELECT b.room.id, b.room.name, SUM(b.totalAmount), COUNT(b)  FROM Booking b WHERE b.createdAt = :date " +
+//            "GROUP BY b.room.id, b.room.name")
+//    List<Object[]> findDataForDate(@Param("date") Date date);
+//
+//    @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
+//            "FROM Booking b " +
+//            "INNER JOIN b.usedServices u " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
+//    List<Object[]> calculateRevenueByService(int year);
+//
+//    @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
+//            "FROM Booking b " +
+//            "INNER JOIN b.usedServices u " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "and MONTH(b.createdAt) = :month " +
+//            "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
+//    List<Object[]> calculateRevenueByService(int year, int month);
+//
+//    @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
+//            "FROM Booking b " +
+//            "INNER JOIN b.usedServices u " +
+//            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+//            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
+//            "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
+//    List<Object[]> calculateRevenueByService(int year, int month, int day);
 
     @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
             "FROM Booking b " +
             "INNER JOIN b.usedServices u " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
+            "where (b.bookingState = 2 OR b.bookingState = 3) AND b.createdAt BETWEEN :startDate AND :endDate " +
             "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
-    List<Object[]> calculateRevenueByService(int year);
-
-    @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
-            "FROM Booking b " +
-            "INNER JOIN b.usedServices u " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
-            "and MONTH(b.createdAt) = :month " +
-            "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
-    List<Object[]> calculateRevenueByService(int year, int month);
-
-    @Query("SELECT u.services.id, u.services.name, SUM(u.price * u.quantity), SUM(u.quantity), u.price " +
-            "FROM Booking b " +
-            "INNER JOIN b.usedServices u " +
-            "where (b.bookingState = 2 OR b.bookingState = 3) AND YEAR(b.createdAt) = :year "+
-            "and MONTH(b.createdAt) = :month and DAY(b.createdAt) = :day " +
-            "GROUP BY u.services.id, u.services.name, u.price, u.quantity")
-    List<Object[]> calculateRevenueByService(int year, int month, int day);
+    List<Object[]> calculateRevenueByService(Date startDate, Date endDate);
 }

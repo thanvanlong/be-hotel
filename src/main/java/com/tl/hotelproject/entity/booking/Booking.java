@@ -72,6 +72,6 @@ public class Booking extends CommonObjectDTO {
                 .map(x -> x.getPrice() * x.getQuantity())
                 .reduce(0, Integer::sum);
 
-        this.totalAmount = totalAmount + (this.quantity * (int)(this.price - this.price * this.selloff)* (int)diffInDays);
+        this.totalAmount = totalAmount + (this.quantity * (this.price) * (int)diffInDays);
     }
 }
